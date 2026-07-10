@@ -1,99 +1,105 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ── Brand tokens ──────────────────────────────────────────────────────────────
 const C = {
-  night:      "#0D0F14",
-  nightCard:  "#13161C",
-  nightBorder:"#1E2128",
-  terra:      "#A96E55",
-  terraLight: "#C4865F",
-  parchment:  "#C8BFA0",
-  linen:      "#E8E4DC",
-  stone:      "#8A8A7A",
-  gold:       "#C8A96E",
-  goldDim:    "#C8A96E33",
-  green:      "#4CAF50",
-  red:        "#F44336",
+  night:"#0D0F14", nightCard:"#13161C", nightBorder:"#1E2128",
+  terra:"#A96E55", terraLight:"#C4865F",
+  parchment:"#C8BFA0", linen:"#E8E4DC", stone:"#8A8A7A",
+  gold:"#C8A96E", goldDim:"#C8A96E33",
+  green:"#4CAF50", red:"#F44336",
+  phase1:"#A96E55", phase2:"#8A7A55", phase3:"#557A6E", phase4:"#555A7A", phase5:"#7A5578",
 };
 
-const AUDIO_URL  = "https://bible-comeback-plan.vercel.app/halfway-message.mp3";
-const FORM_ID    = "xnjkerpn";
+const AUDIO_URL = "https://bible-comeback-plan.vercel.app/halfway-message.mp3";
+const FORM_ID   = "xnjkerpn";
 
-// ── Reading plan ──────────────────────────────────────────────────────────────
 const READINGS = [
-  { id:1,  ref:"Romans 8:1",           verse:"\"There is therefore now no condemnation for those who are in Christ Jesus.\"",                                                                                                    note:"Read it out loud. Then sit in silence for thirty seconds.",                                                     minMinutes:1,  phase:1 },
-  { id:2,  ref:"Hebrews 4:16",         verse:"\"Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need.\"",                                             note:"Read it twice. Let \"confidence\" land.",                                                                       minMinutes:1,  phase:1 },
-  { id:3,  ref:"Psalm 34:18",          verse:"\"The Lord is near to the brokenhearted and saves the crushed in spirit.\"",                                                                                                      note:"Read it slowly. Notice what it says about where God is.",                                                       minMinutes:1,  phase:1 },
-  { id:4,  ref:"Romans 5:6–8",         verse:"\"For while we were still weak, at the right time Christ died for the ungodly... God shows his love for us in that while we were still sinners, Christ died for us.\"",          note:"Three verses. Let \"while we were still sinners\" land.",                                                        minMinutes:2,  phase:2 },
-  { id:5,  ref:"Lamentations 3:22–23", verse:"\"The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.\"",                                     note:"His mercies are new every morning — not every streak.",                                                          minMinutes:2,  phase:2 },
-  { id:6,  ref:"Psalm 32:1–2",         verse:"\"Blessed is the one whose transgression is forgiven, whose sin is covered. Blessed is the man against whom the Lord counts no iniquity.\"",                                     note:"Notice the word \"blessed.\" Read both verses out loud.",                                                        minMinutes:2,  phase:2 },
-  { id:7,  ref:"1 John 1:9",           verse:"\"If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.\"",                                                         note:"One verse. Read it, then sit in silence for thirty seconds.",                                                   minMinutes:2,  phase:2 },
-  { id:8,  ref:"Luke 15:11–24",        verse:"Open your physical Bible to Luke 15:11–24.",                                                                                                                                     note:"The Prodigal Son's return. Read slowly. Notice when the father runs.",                                           minMinutes:5,  phase:3 },
-  { id:9,  ref:"John 21:15–17",        verse:"Open your physical Bible to John 21:15–17.",                                                                                                                                     note:"Jesus restores Peter. Three questions — one for every denial. Then an assignment.",                              minMinutes:5,  phase:3 },
-  { id:10, ref:"Psalm 51:1–12",        verse:"Open your physical Bible to Psalm 51:1–12.",                                                                                                                                     note:"David after Bathsheba. The most honest prayer of someone who knew they had failed.",                            minMinutes:5,  phase:3 },
-  { id:11, ref:"Jonah 3:1–3",          verse:"Open your physical Bible to Jonah 3:1–3.",                                                                                                                                       note:"\"The word of the Lord came to Jonah a second time.\" The second time is the point.",                           minMinutes:5,  phase:3 },
-  { id:12, ref:"1 Timothy 1:12–16",    verse:"Open your physical Bible to 1 Timothy 1:12–16.",                                                                                                                                 note:"Paul's testimony. Chief of sinners. Shown mercy. For exactly this reason.",                                     minMinutes:5,  phase:3 },
-  { id:13, ref:"Hosea 2:14–15",        verse:"Open your physical Bible to Hosea 2:14–15.",                                                                                                                                     note:"God leads his people back through the wilderness and speaks tenderly to them there.",                            minMinutes:5,  phase:3 },
-  { id:14, ref:"Psalm 103:8–14",       verse:"Open your physical Bible to Psalm 103:8–14.",                                                                                                                                    note:"He does not deal with us according to our sins. As far as east is from west.",                                  minMinutes:5,  phase:3 },
-  { id:15, ref:"Luke 22:54–62",        verse:"Open your physical Bible to Luke 22:54–62.",                                                                                                                                     note:"Peter's denial. Read slowly. Notice the moment Jesus turns and looks at him.",                                  minMinutes:5,  phase:3 },
-  { id:16, ref:"Isaiah 55:1–7",        verse:"Open your physical Bible to Isaiah 55:1–7.",                                                                                                                                     note:"Read this as an invitation written specifically for you.",                                                      minMinutes:8,  phase:4 },
-  { id:17, ref:"Zephaniah 3:17",       verse:"Open your physical Bible to Zephaniah 3:17.",                                                                                                                                    note:"Read it three times. Let each phrase land before moving to the next.",                                          minMinutes:8,  phase:4 },
-  { id:18, ref:"Joel 2:12–13",         verse:"Open your physical Bible to Joel 2:12–13.",                                                                                                                                      note:"Return to me with all your heart. Rend your hearts and not your garments.",                                     minMinutes:8,  phase:4 },
-  { id:19, ref:"Revelation 2:1–5",     verse:"Open your physical Bible to Revelation 2:1–5.",                                                                                                                                  note:"The church that left their first love. Remember, repent, return.",                                              minMinutes:8,  phase:4 },
-  { id:20, ref:"Isaiah 43:1–4",        verse:"Open your physical Bible to Isaiah 43:1–4.",                                                                                                                                     note:"Fear not. I have redeemed you. I have called you by name. You are mine.",                                       minMinutes:8,  phase:4 },
-  { id:21, ref:"James 4:7–10",         verse:"Open your physical Bible to James 4:7–10.",                                                                                                                                      note:"Draw near to God and he will draw near to you. The promise is directional.",                                    minMinutes:8,  phase:4 },
-  { id:22, ref:"Romans 8:26–39",       verse:"Open your physical Bible to Romans 8:26–39.",                                                                                                                                    note:"Nothing can separate us from the love of God. Read this as the closing argument.",                              minMinutes:10, phase:4 },
-  { id:23, ref:"Ephesians 1",          verse:"Open your physical Bible to Ephesians 1.",                                                                                                                                       note:"Every spiritual blessing. Chosen. Adopted. Redeemed. Sealed.",                                                 minMinutes:12, phase:5 },
-  { id:24, ref:"Romans 8",             verse:"Open your physical Bible to Romans 8.",                                                                                                                                          note:"You read verse 1 on Reading 1. Now read the whole chapter. It lands differently now.",                         minMinutes:12, phase:5 },
-  { id:25, ref:"Colossians 3:1–17",    verse:"Open your physical Bible to Colossians 3:1–17.",                                                                                                                                 note:"Set your minds on things above. Put on the new self.",                                                         minMinutes:12, phase:5 },
-  { id:26, ref:"Hebrews 12:1–3",       verse:"Open your physical Bible to Hebrews 12:1–3.",                                                                                                                                    note:"Since we are surrounded by so great a cloud of witnesses. Run with endurance.",                                 minMinutes:12, phase:5 },
-  { id:27, ref:"Philippians 3:7–14",   verse:"Open your physical Bible to Philippians 3:7–14.",                                                                                                                                note:"Forgetting what lies behind. Straining forward. I press on.",                                                  minMinutes:15, phase:5 },
-  { id:28, ref:"Psalm 27",             verse:"Open your physical Bible to Psalm 27.",                                                                                                                                          note:"The Lord is my light and my salvation. One thing I have asked.",                                               minMinutes:15, phase:5 },
-  { id:29, ref:"John 15:1–11",         verse:"Open your physical Bible to John 15:1–11.",                                                                                                                                      note:"Abide in me. The word for what you've been building for 29 readings is abiding.",                              minMinutes:15, phase:5 },
-  { id:30, ref:"Revelation 3:20",      verse:"\"Behold, I stand at the door and knock. If anyone hears my voice and opens the door, I will come in to him and eat with him, and he with me.\"",                               note:"Your last reading is an invitation. The full circle.",                                                          minMinutes:15, phase:5 },
+  {id:1,  ref:"Romans 8:1",           verse:'"There is therefore now no condemnation for those who are in Christ Jesus."',                                                                                                   note:"Read it out loud. Then sit in silence for thirty seconds.",                                              minMinutes:1,  phase:1},
+  {id:2,  ref:"Hebrews 4:16",         verse:'"Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need."',                                          note:'Read it twice. Let "confidence" land.',                                                                  minMinutes:1,  phase:1},
+  {id:3,  ref:"Psalm 34:18",          verse:'"The Lord is near to the brokenhearted and saves the crushed in spirit."',                                                                                                   note:"Read it slowly. Notice what it says about where God is.",                                                minMinutes:1,  phase:1},
+  {id:4,  ref:"Romans 5:6–8",         verse:'"For while we were still weak, at the right time Christ died for the ungodly... God shows his love for us in that while we were still sinners, Christ died for us."',       note:'Three verses. Let "while we were still sinners" land.',                                                  minMinutes:2,  phase:2},
+  {id:5,  ref:"Lamentations 3:22–23", verse:'"The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness."',                                  note:"His mercies are new every morning — not every streak.",                                                  minMinutes:2,  phase:2},
+  {id:6,  ref:"Psalm 32:1–2",         verse:'"Blessed is the one whose transgression is forgiven, whose sin is covered. Blessed is the man against whom the Lord counts no iniquity."',                                  note:'Notice the word "blessed." Read both verses out loud.',                                                  minMinutes:2,  phase:2},
+  {id:7,  ref:"1 John 1:9",           verse:'"If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness."',                                                      note:"One verse. Read it, then sit in silence for thirty seconds.",                                            minMinutes:2,  phase:2},
+  {id:8,  ref:"Luke 15:11–24",        verse:"Open your physical Bible to Luke 15:11–24.",                                                                                                                                note:"The Prodigal Son's return. Read slowly. Notice when the father runs.",                                   minMinutes:5,  phase:3},
+  {id:9,  ref:"John 21:15–17",        verse:"Open your physical Bible to John 21:15–17.",                                                                                                                                note:"Jesus restores Peter. Three questions — one for every denial. Then an assignment.",                      minMinutes:5,  phase:3},
+  {id:10, ref:"Psalm 51:1–12",        verse:"Open your physical Bible to Psalm 51:1–12.",                                                                                                                                note:"David after Bathsheba. The most honest prayer of someone who knew they had failed.",                    minMinutes:5,  phase:3},
+  {id:11, ref:"Jonah 3:1–3",          verse:"Open your physical Bible to Jonah 3:1–3.",                                                                                                                                  note:'"The word of the Lord came to Jonah a second time." The second time is the point.',                     minMinutes:5,  phase:3},
+  {id:12, ref:"1 Timothy 1:12–16",    verse:"Open your physical Bible to 1 Timothy 1:12–16.",                                                                                                                            note:"Paul's testimony. Chief of sinners. Shown mercy. For exactly this reason.",                             minMinutes:5,  phase:3},
+  {id:13, ref:"Hosea 2:14–15",        verse:"Open your physical Bible to Hosea 2:14–15.",                                                                                                                                note:"God leads his people back through the wilderness and speaks tenderly to them there.",                    minMinutes:5,  phase:3},
+  {id:14, ref:"Psalm 103:8–14",       verse:"Open your physical Bible to Psalm 103:8–14.",                                                                                                                               note:"He does not deal with us according to our sins. As far as east is from west.",                          minMinutes:5,  phase:3},
+  {id:15, ref:"Luke 22:54–62",        verse:"Open your physical Bible to Luke 22:54–62.",                                                                                                                                note:"Peter's denial. Read slowly. Notice the moment Jesus turns and looks at him.",                          minMinutes:5,  phase:3},
+  {id:16, ref:"Isaiah 55:1–7",        verse:"Open your physical Bible to Isaiah 55:1–7.",                                                                                                                                note:"Read this as an invitation written specifically for you.",                                               minMinutes:8,  phase:4},
+  {id:17, ref:"Zephaniah 3:17",       verse:"Open your physical Bible to Zephaniah 3:17.",                                                                                                                               note:"Read it three times. Let each phrase land before moving to the next.",                                   minMinutes:8,  phase:4},
+  {id:18, ref:"Joel 2:12–13",         verse:"Open your physical Bible to Joel 2:12–13.",                                                                                                                                 note:"Return to me with all your heart. Rend your hearts and not your garments.",                             minMinutes:8,  phase:4},
+  {id:19, ref:"Revelation 2:1–5",     verse:"Open your physical Bible to Revelation 2:1–5.",                                                                                                                             note:"The church that left their first love. Remember, repent, return.",                                       minMinutes:8,  phase:4},
+  {id:20, ref:"Isaiah 43:1–4",        verse:"Open your physical Bible to Isaiah 43:1–4.",                                                                                                                                note:"Fear not. I have redeemed you. I have called you by name. You are mine.",                               minMinutes:8,  phase:4},
+  {id:21, ref:"James 4:7–10",         verse:"Open your physical Bible to James 4:7–10.",                                                                                                                                 note:"Draw near to God and he will draw near to you. The promise is directional.",                            minMinutes:8,  phase:4},
+  {id:22, ref:"Romans 8:26–39",       verse:"Open your physical Bible to Romans 8:26–39.",                                                                                                                               note:"Nothing can separate us from the love of God. Read this as the closing argument.",                      minMinutes:10, phase:4},
+  {id:23, ref:"Ephesians 1",          verse:"Open your physical Bible to Ephesians 1.",                                                                                                                                  note:"Every spiritual blessing. Chosen. Adopted. Redeemed. Sealed.",                                          minMinutes:12, phase:5},
+  {id:24, ref:"Romans 8",             verse:"Open your physical Bible to Romans 8.",                                                                                                                                     note:"You read verse 1 on Reading 1. Now read the whole chapter. It lands differently now.",                  minMinutes:12, phase:5},
+  {id:25, ref:"Colossians 3:1–17",    verse:"Open your physical Bible to Colossians 3:1–17.",                                                                                                                            note:"Set your minds on things above. Put on the new self.",                                                  minMinutes:12, phase:5},
+  {id:26, ref:"Hebrews 12:1–3",       verse:"Open your physical Bible to Hebrews 12:1–3.",                                                                                                                               note:"Since we are surrounded by so great a cloud of witnesses. Run with endurance.",                         minMinutes:12, phase:5},
+  {id:27, ref:"Philippians 3:7–14",   verse:"Open your physical Bible to Philippians 3:7–14.",                                                                                                                           note:"Forgetting what lies behind. Straining forward. I press on.",                                           minMinutes:15, phase:5},
+  {id:28, ref:"Psalm 27",             verse:"Open your physical Bible to Psalm 27.",                                                                                                                                     note:"The Lord is my light and my salvation. One thing I have asked.",                                        minMinutes:15, phase:5},
+  {id:29, ref:"John 15:1–11",         verse:"Open your physical Bible to John 15:1–11.",                                                                                                                                 note:"Abide in me. The word for what you've been building for 29 readings is abiding.",                       minMinutes:15, phase:5},
+  {id:30, ref:"Revelation 3:20",      verse:'"Behold, I stand at the door and knock. If anyone hears my voice and opens the door, I will come in to him and eat with him, and he with me."',                            note:"Your last reading is an invitation. The full circle.",                                                   minMinutes:15, phase:5},
 ];
 
+const PHASE_LABELS = {1:"Phase 1 — One Verse",2:"Phase 2 — Two to Three Verses",3:"Phase 3 — Short Passages",4:"Phase 4 — Medium Passages",5:"Phase 5 — Full Chapters"};
+const PHASE_COLORS = {1:C.phase1,2:C.phase2,3:C.phase3,4:C.phase4,5:C.phase5};
+
 const PHASE_WHY = {
-  1: { title:"Why we start with one verse", body:"Every plan you've tried before started too high. Four chapters a day. Three chapters. Even one chapter felt like a mountain after years away. And when you missed a day, the debt piled up until quitting felt easier than catching up.\n\nSo this plan starts differently. One verse. That's it.\n\nNot because I think you're weak. Because I know what it's like to sit down after years away and have your mind wander before you've finished the first paragraph. Your brain isn't broken — it's just been away. And you don't rebuild by starting at the top. You rebuild by proving to yourself that showing up is possible.\n\nOne verse. Read it. Sit in it. That counts." },
-  2: { title:"You showed up three times.", body:"That's not nothing — that's the hardest part.\n\nNow we go a little further. Two or three verses. Still short. Still easy. That's intentional.\n\nYour brain is building something right now — a connection between sitting down and opening your Bible. The more times you show up before it gets hard, the stronger that connection gets. So we keep the bar low a little longer. Trust the process." },
-  3: { title:"Seven readings. Seven times you showed up.", body:"Something has shifted — even if you can't feel it yet. You've proven to yourself that showing up is possible. Now the plan goes deeper.\n\nThese next readings are the ones I wish someone had shown me when I was trying to come back. They're not random passages. Every single one is a story of someone who failed, drifted, or ran — and what God did next. Read them like evidence. Because that's exactly what they are." },
-  4: { title:"You're past the halfway point.", body:"The passages from here shift focus. You've been reading about what God does with people who fail. Now you're going to read about who God says you are — not who shame says you are.\n\nThis is where the plan stops being about getting back to reading and starts being about who you become because you did." },
-  5: { title:"You're almost there.", body:"These last readings are full chapters. Not because the bar had to go up — because you're ready. You've shown up enough times that this is who you are now.\n\nRead these slowly. You've earned the depth." },
+  1:{title:"Why we start with one verse",body:"Every plan you've tried before started too high. Four chapters a day. Three chapters. Even one chapter felt like a mountain after years away. And when you missed a day, the debt piled up until quitting felt easier than catching up.\n\nSo this plan starts differently. One verse. That's it.\n\nNot because I think you're weak. Because I know what it's like to sit down after years away and have your mind wander before you've finished the first paragraph. Your brain isn't broken — it's just been away. And you don't rebuild by starting at the top. You rebuild by proving to yourself that showing up is possible.\n\nOne verse. Read it. Sit in it. That counts."},
+  2:{title:"You showed up three times.",body:"That's not nothing — that's the hardest part.\n\nNow we go a little further. Two or three verses. Still short. Still easy. That's intentional.\n\nYour brain is building something right now — a connection between sitting down and opening your Bible. The more times you show up before it gets hard, the stronger that connection gets. So we keep the bar low a little longer. Trust the process."},
+  3:{title:"Seven readings. Seven times you showed up.",body:"Something has shifted — even if you can't feel it yet. You've proven to yourself that showing up is possible. Now the plan goes deeper.\n\nThese next readings are the ones I wish someone had shown me when I was trying to come back. They're not random passages. Every single one is a story of someone who failed, drifted, or ran — and what God did next. Read them like evidence. Because that's exactly what they are."},
+  4:{title:"You're past the halfway point.",body:"The passages from here shift focus. You've been reading about what God does with people who fail. Now you're going to read about who God says you are — not who shame says you are.\n\nThis is where the plan stops being about getting back to reading and starts being about who you become because you did."},
+  5:{title:"You're almost there.",body:"These last readings are full chapters. Not because the bar had to go up — because you're ready. You've shown up enough times that this is who you are now.\n\nRead these slowly. You've earned the depth."},
 };
 
 const QUIZ = [
-  { q:"What does the Return Reading Plan track instead of a streak?", options:["Chapters read","Days in a row","Returns","Minutes spent"], correct:2 },
-  { q:"What is the only rule when you miss a reading?", options:["Start over from Reading 1","Never miss twice","Read double the next time","Skip it and move on"], correct:1 },
-  { q:"Why does this plan start with just one verse?", options:["Because the Bible is hard to understand","To prove that showing up is possible before the bar rises","Because shorter is always better","To save time"], correct:1 },
+  {q:"What does the Return Reading Plan track instead of a streak?",options:["Chapters read","Days in a row","Returns","Minutes spent"],correct:2},
+  {q:"What is the only rule when you miss a reading?",options:["Start over from Reading 1","Never miss twice","Read double the next time","Skip it and move on"],correct:1},
+  {q:"Why does this plan start with just one verse?",options:["Because the Bible is hard to understand","To prove that showing up is possible before the bar rises","Because shorter is always better","To save time"],correct:1},
 ];
 
 const BADGES = [
-  { id:"first_return",    label:"First Return",    emoji:"↩" },
-  { id:"three_comebacks", label:"Three Comebacks", emoji:"🔥" },
-  { id:"week_one",        label:"Week One",        emoji:"⭐" },
-  { id:"halfway",         label:"Halfway Home",    emoji:"🏔" },
-  { id:"the_return",      label:"The Return",      emoji:"✝" },
+  {id:"first_return",    label:"First Return",    emoji:"↩"},
+  {id:"three_comebacks", label:"Three Comebacks", emoji:"🔥"},
+  {id:"week_one",        label:"Week One",        emoji:"⭐"},
+  {id:"halfway",         label:"Halfway Home",    emoji:"🏔"},
+  {id:"the_return",      label:"The Return",      emoji:"✝"},
 ];
 
-const STORAGE_KEY = "rrp_v3";
-function loadState() { try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } }
-function saveState(s) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {} }
-function freshState() {
-  return {
-    screen:"welcome", onboardingStep:0,
-    firstName:"", email:"",
-    anchor:"", location:"", pairing:"", day1Why:"",
+const STORAGE_KEY = "rrp_v4";
+function loadState(){try{const r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):null;}catch{return null;}}
+function saveState(s){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(s));}catch{}}
+function freshState(){
+  return{
+    screen:"welcome",onboardingStep:0,
+    firstName:"",email:"",
+    anchor:"",location:"",pairing:"",day1Why:"",
     accountabilityName:"",
-    midpointUnlocked:false,
-    completionSubmitted:false,
-    completedReadings:[], notes:{},
-    returnCount:0, comebackCount:0, badges:[],
-    lastCompletedId:null, missedBeforeLast:false,
+    midpointUnlocked:false,dismissedPhaseMsg:null,
+    completionSubmitted:false,confirmReset:false,
+    completedReadings:[],notes:{},
+    returnCount:0,comebackCount:0,badges:[],
+    lastCompletedId:null,missedBeforeLast:false,
   };
 }
 
-// ── CSS ───────────────────────────────────────────────────────────────────────
-const css = `
+async function submitForm(data){
+  try{
+    const res=await fetch(`https://formspree.io/f/${FORM_ID}`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify(data),
+    });
+    return res.ok;
+  }catch{return false;}
+}
+
+// ── CSS ────────────────────────────────────────────────────────────────────────
+const css=`
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:${C.night};color:${C.parchment};font-family:'Montserrat',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
@@ -107,7 +113,6 @@ body{background:${C.night};color:${C.parchment};font-family:'Montserrat',sans-se
 .h3{font-size:14px;font-weight:700;color:${C.linen};margin-bottom:6px;}
 .body{font-size:13px;font-weight:400;color:${C.parchment};line-height:1.75;}
 .muted{font-size:11px;color:${C.stone};line-height:1.6;}
-.divider{border:none;border-top:1px solid ${C.nightBorder};margin:18px 0;}
 .gold-line{height:1px;background:linear-gradient(90deg,transparent,${C.gold},transparent);margin:18px 0;}
 .inp{width:100%;background:${C.night};border:1px solid ${C.nightBorder};border-radius:10px;color:${C.linen};font-family:'Montserrat',sans-serif;font-size:13px;padding:13px 15px;outline:none;transition:border-color .2s;resize:vertical;}
 .inp:focus{border-color:${C.terra};}
@@ -118,44 +123,47 @@ body{background:${C.night};color:${C.parchment};font-family:'Montserrat',sans-se
 .btn:disabled{opacity:.35;cursor:not-allowed;}
 .btn-g{width:100%;background:transparent;color:${C.stone};border:1px solid ${C.nightBorder};border-radius:10px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;padding:13px;cursor:pointer;transition:border-color .2s,color .2s;}
 .btn-g:hover{border-color:${C.stone};color:${C.parchment};}
-.path-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
-.dot{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;transition:background .3s;}
-.dot.done{background:${C.terra};color:${C.linen};cursor:pointer;}
-.dot.done:hover{background:${C.terraLight};}
+.btn-back{background:none;border:none;color:${C.stone};font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;margin-bottom:20px;}
+.btn-back:hover{color:${C.parchment};}
+.path-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.dot{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:default;transition:background .3s;min-width:32px;}
+.dot.done{color:${C.linen};cursor:pointer;}
 .dot.cur{background:${C.goldDim};color:${C.gold};border:1px solid ${C.gold};cursor:pointer;}
 .dot.fut{background:${C.nightBorder};color:${C.stone};}
 .badge{display:inline-flex;align-items:center;gap:5px;background:${C.goldDim};border:1px solid ${C.gold};border-radius:20px;padding:4px 10px;font-size:10px;font-weight:600;color:${C.gold};}
 .qopt{width:100%;background:${C.night};border:1px solid ${C.nightBorder};border-radius:10px;color:${C.parchment};font-family:'Montserrat',sans-serif;font-size:13px;font-weight:500;padding:13px 15px;cursor:pointer;text-align:left;transition:border-color .15s,background .15s;margin-bottom:8px;}
-.qopt:hover{border-color:${C.terra};}
+.qopt:hover:not(:disabled){border-color:${C.terra};}
+.qopt:disabled{cursor:not-allowed;opacity:.6;}
 .qopt.ok{border-color:${C.green};background:${C.green}15;color:${C.green};}
 .qopt.no{border-color:${C.red};background:${C.red}15;color:${C.red};}
 .lock-wrap{position:relative;overflow:hidden;border:1px solid ${C.nightBorder};border-radius:16px;padding:28px 24px;background:${C.nightCard};}
 .lock-ov{position:absolute;inset:0;background:${C.night}CC;backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:16px;}
+.footer-note{text-align:center;padding:20px 0 0;border-top:1px solid ${C.nightBorder};}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 .anim{animation:fadeIn .4s ease both;}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
 .pop{animation:pop .5s ease;}
 `;
 
-// ── Confetti ──────────────────────────────────────────────────────────────────
-function Confetti({ active }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    if (!active || !ref.current) return;
-    const cv = ref.current, ctx = cv.getContext("2d");
-    cv.width = window.innerWidth; cv.height = window.innerHeight;
-    const pts = Array.from({length:120},()=>({
-      x:Math.random()*cv.width, y:Math.random()*-cv.height,
-      r:Math.random()*6+3, d:Math.random()*2+1,
+// ── Confetti ───────────────────────────────────────────────────────────────────
+function Confetti({active}){
+  const ref=useRef(null);
+  useEffect(()=>{
+    if(!active||!ref.current)return;
+    const cv=ref.current,ctx=cv.getContext("2d");
+    cv.width=window.innerWidth;cv.height=window.innerHeight;
+    const pts=Array.from({length:140},()=>({
+      x:Math.random()*cv.width,y:Math.random()*-cv.height,
+      r:Math.random()*6+3,d:Math.random()*2+1,
       col:[C.gold,C.terra,C.parchment,"#fff"][Math.floor(Math.random()*4)],
-      ta:0, ts:Math.random()*.07+.05,
+      ta:0,ts:Math.random()*.07+.05,
     }));
     let fr;
-    const draw = () => {
+    const draw=()=>{
       ctx.clearRect(0,0,cv.width,cv.height);
-      pts.forEach(p=>{ p.ta+=p.ts; p.y+=p.d+1; p.x+=Math.sin(p.ta)*2;
-        ctx.beginPath(); ctx.fillStyle=p.col;
-        ctx.ellipse(p.x,p.y,p.r,p.r/2,Math.sin(p.ta)*12,0,Math.PI*2); ctx.fill(); });
+      pts.forEach(p=>{p.ta+=p.ts;p.y+=p.d+1;p.x+=Math.sin(p.ta)*2;
+        ctx.beginPath();ctx.fillStyle=p.col;
+        ctx.ellipse(p.x,p.y,p.r,p.r/2,Math.sin(p.ta)*12,0,Math.PI*2);ctx.fill();});
       fr=requestAnimationFrame(draw);
     };
     draw();
@@ -163,18 +171,18 @@ function Confetti({ active }) {
     return()=>{cancelAnimationFrame(fr);clearTimeout(t);};
   },[active]);
   if(!active)return null;
-  return <canvas ref={ref} style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:9999}}/>;
+  return<canvas ref={ref} style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:9999}}/>;
 }
 
-// ── Hold Button ───────────────────────────────────────────────────────────────
-function HoldBtn({ label, holdLabel, duration=3000, onComplete }) {
+// ── Hold Button ────────────────────────────────────────────────────────────────
+function HoldBtn({label,holdLabel,duration=3000,onComplete}){
   const [prog,setProg]=useState(0),[holding,setHolding]=useState(false);
   const iRef=useRef(null),sRef=useRef(null);
   const start=useCallback(()=>{
     setHolding(true);sRef.current=Date.now();
     iRef.current=setInterval(()=>{
       const p=Math.min((Date.now()-sRef.current)/duration,1);
-      setProg(p); if(p>=1){clearInterval(iRef.current);onComplete();}
+      setProg(p);if(p>=1){clearInterval(iRef.current);onComplete();}
     },16);
   },[duration,onComplete]);
   const stop=useCallback(()=>{setHolding(false);clearInterval(iRef.current);setProg(0);},[]);
@@ -191,8 +199,8 @@ function HoldBtn({ label, holdLabel, duration=3000, onComplete }) {
   );
 }
 
-// ── Timer ─────────────────────────────────────────────────────────────────────
-function Timer({ minutes, onDone, onStart }) {
+// ── Timer ──────────────────────────────────────────────────────────────────────
+function Timer({minutes,onDone,onStart}){
   const total=minutes*60;
   const [left,setLeft]=useState(total),[running,setRunning]=useState(false),[done,setDone]=useState(false);
   const ref=useRef(null);
@@ -205,7 +213,7 @@ function Timer({ minutes, onDone, onStart }) {
     }
     return()=>clearInterval(ref.current);
   },[running]);
-  const pct=(total-left)/total, r=34, circ=2*Math.PI*r;
+  const pct=(total-left)/total,r=34,circ=2*Math.PI*r;
   const m=Math.floor(left/60),s=left%60;
   return(
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
@@ -220,12 +228,20 @@ function Timer({ minutes, onDone, onStart }) {
           {done?"✓":`${m}:${s.toString().padStart(2,"0")}`}
         </div>
       </div>
-      {!done&&(
-        <button onClick={()=>{if(!running)onStart();setRunning(r=>!r);}}
-          style={{background:C.nightCard,border:`1px solid ${C.nightBorder}`,borderRadius:8,color:C.parchment,fontFamily:"Montserrat,sans-serif",fontSize:13,fontWeight:600,padding:"8px 20px",cursor:"pointer"}}>
-          {running?"Pause":left===total?"Start Timer":"Resume"}
-        </button>
-      )}
+      <div style={{display:"flex",gap:10}}>
+        {!done&&(
+          <button onClick={()=>{if(!running)onStart();setRunning(r=>!r);}}
+            style={{background:C.nightCard,border:`1px solid ${C.nightBorder}`,borderRadius:8,color:C.parchment,fontFamily:"Montserrat,sans-serif",fontSize:12,fontWeight:600,padding:"8px 16px",cursor:"pointer"}}>
+            {running?"Pause":left===total?"Start Timer":"Resume"}
+          </button>
+        )}
+        {running&&(
+          <button onClick={()=>{clearInterval(ref.current);setRunning(false);setDone(true);onDone();}}
+            style={{background:"transparent",border:`1px solid ${C.nightBorder}`,borderRadius:8,color:C.stone,fontFamily:"Montserrat,sans-serif",fontSize:12,fontWeight:600,padding:"8px 16px",cursor:"pointer"}}>
+            Skip
+          </button>
+        )}
+      </div>
       <p className="muted" style={{textAlign:"center"}}>
         {done?"Timer complete — write your reflection below.":`Minimum: ${minutes} min — read as long as you want.`}
       </p>
@@ -233,8 +249,8 @@ function Timer({ minutes, onDone, onStart }) {
   );
 }
 
-// ── Audio Player ──────────────────────────────────────────────────────────────
-function AudioPlayer({ src }) {
+// ── Audio Player ───────────────────────────────────────────────────────────────
+function AudioPlayer({src}){
   const [playing,setPlaying]=useState(false),[prog,setProg]=useState(0),[dur,setDur]=useState(0);
   const ref=useRef(null);
   const toggle=()=>{
@@ -267,110 +283,57 @@ function AudioPlayer({ src }) {
   );
 }
 
-// ── Formspree Midpoint Form ───────────────────────────────────────────────────
-function MidpointForm({ savedName, savedEmail, onSuccess }) {
-  const [name, setName] = useState(savedName || "");
-  const [reflection, setReflection] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const submit = async () => {
-    if (!name.trim() || !reflection.trim()) return;
-    setSubmitting(true); setError(false);
-    try {
-      const res = await fetch(`https://formspree.io/f/${FORM_ID}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ "form-type": "Midpoint Reflection (Reading 15)", name, email: savedEmail, reflection }),
-      });
-      if (res.ok) { setDone(true); onSuccess(); }
-      else setError(true);
-    } catch { setError(true); }
+// ── Simple Form ────────────────────────────────────────────────────────────────
+function SimpleForm({title,description,namePlaceholder,textLabel,textPlaceholder,submitLabel,formType,extraData,onSuccess}){
+  const [name,setName]=useState(""),[text,setText]=useState("");
+  const [submitting,setSubmitting]=useState(false),[error,setError]=useState(false),[done,setDone]=useState(false);
+  const submit=async()=>{
+    if(!name.trim()||!text.trim())return;
+    setSubmitting(true);setError(false);
+    const ok=await submitForm({"form-type":formType,name,text,...(extraData||{})});
+    if(ok){setDone(true);setTimeout(()=>onSuccess(name,text),1500);}
+    else setError(true);
     setSubmitting(false);
   };
-
-  if (done) return (
+  if(done)return(
     <div style={{textAlign:"center",padding:"20px 0"}}>
-      <p style={{fontSize:22,marginBottom:8}}>✓</p>
-      <p className="body" style={{color:C.linen}}>Unlocking your message...</p>
+      <p style={{fontSize:28,marginBottom:10}}>✓</p>
+      <p className="body" style={{color:C.linen,fontWeight:600}}>Received. Thank you.</p>
     </div>
   );
-
-  return (
+  return(
     <div style={{display:"flex",flexDirection:"column",gap:12}}>
-      <p className="h3">How has the first half of the plan been?</p>
-      <p className="muted" style={{marginBottom:4}}>Be honest — what's worked, what's been hard. Your answer helps me make this better for the next person. It unlocks the audio message immediately.</p>
+      {title&&<p className="h3">{title}</p>}
+      {description&&<p className="body" style={{marginBottom:4}}>{description}</p>}
       <div>
         <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your name</p>
-        <input className="inp" placeholder="First name..." value={name} onChange={e=>setName(e.target.value)}/>
+        <input className="inp" placeholder={namePlaceholder||"First name..."} value={name} onChange={e=>setName(e.target.value)}/>
       </div>
       <div>
-        <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your experience so far</p>
-        <textarea className="inp" rows={4} placeholder="What's working, what's been hard..." value={reflection} onChange={e=>setReflection(e.target.value)}/>
+        <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>{textLabel}</p>
+        <textarea className="inp" rows={4} placeholder={textPlaceholder} value={text} onChange={e=>setText(e.target.value)}/>
       </div>
-      {error && <p style={{color:C.red,fontSize:11}}>Something went wrong. Please try again.</p>}
-      <button className="btn" disabled={submitting||!name.trim()||!reflection.trim()} onClick={submit}>
-        {submitting?"Sending...":"Submit & Unlock →"}
+      {error&&<p style={{color:C.red,fontSize:11}}>Something went wrong. Please try again.</p>}
+      <button className="btn" disabled={submitting||!name.trim()||!text.trim()} onClick={submit}>
+        {submitting?"Sending...":submitLabel}
       </button>
     </div>
   );
 }
 
-// ── Formspree Completion Form ─────────────────────────────────────────────────
-function CompletionForm({ savedName, savedEmail, day1Why, returnCount, badges, onSuccess }) {
-  const [name, setName] = useState(savedName || "");
-  const [reflection, setReflection] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const submit = async () => {
-    if (!name.trim() || !reflection.trim()) return;
-    setSubmitting(true); setError(false);
-    try {
-      const res = await fetch(`https://formspree.io/f/${FORM_ID}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ "form-type": "Day 30 Testimonial", name, email: savedEmail, "day1-why": day1Why, reflection, "return-count": returnCount, badges: badges.join(", ") }),
-      });
-      if (res.ok) { setDone(true); onSuccess(); }
-      else setError(true);
-    } catch { setError(true); }
-    setSubmitting(false);
-  };
-
-  if (done) return (
-    <div style={{textAlign:"center",padding:"16px 0"}}>
-      <p style={{fontSize:22,marginBottom:8}}>✓</p>
-      <p className="body" style={{color:C.linen}}>Thank you. Your story matters.</p>
-    </div>
-  );
-
-  return (
-    <div style={{display:"flex",flexDirection:"column",gap:12}}>
-      <p className="h3">Would you share what happened?</p>
-      <p className="body" style={{marginTop:4,marginBottom:4}}>How many days did you end up reading? Did this plan help? Would you recommend it? Your story helps the next person who needs to come back.</p>
-      <div>
-        <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your name</p>
-        <input className="inp" placeholder="First name..." value={name} onChange={e=>setName(e.target.value)}/>
-      </div>
-      <div>
-        <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your honest experience</p>
-        <textarea className="inp" rows={4} placeholder="What changed..." value={reflection} onChange={e=>setReflection(e.target.value)}/>
-      </div>
-      {error && <p style={{color:C.red,fontSize:11}}>Something went wrong. Please try again.</p>}
-      <button className="btn" disabled={submitting||!name.trim()||!reflection.trim()} onClick={submit}>
-        {submitting?"Sending...":"Send my story →"}
-      </button>
+// ── Footer ─────────────────────────────────────────────────────────────────────
+function Footer(){
+  return(
+    <div className="footer-note">
+      <p className="muted">Questions? Email <a href="mailto:christian@christianlayne.co" style={{color:C.terra}}>christian@christianlayne.co</a></p>
     </div>
   );
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────────
-export default function ReturnReadingPlan() {
-  const [s, setS] = useState(() => loadState() || freshState());
-  const [quizQ,setQuizQ]=useState(0),[quizAns,setQuizAns]=useState(null),[quizWrong,setQuizWrong]=useState([]);
+// ── Main ───────────────────────────────────────────────────────────────────────
+export default function ReturnReadingPlan(){
+  const [s,setS]=useState(()=>loadState()||freshState());
+  const [quizQ,setQuizQ]=useState(0),[quizAns,setQuizAns]=useState(null),[quizWrong,setQuizWrong]=useState([]),[quizCooldown,setQuizCooldown]=useState(false);
   const [countAnim,setCountAnim]=useState(false);
   const [noteVal,setNoteVal]=useState("");
   const [timerDone,setTimerDone]=useState(false),[timerStarted,setTimerStarted]=useState(false);
@@ -384,6 +347,11 @@ export default function ReturnReadingPlan() {
 
   const nextUnread=READINGS.find(r=>!s.completedReadings.includes(r.id));
   const currentReading=viewingId?READINGS.find(r=>r.id===viewingId):nextUnread;
+
+  // Phase message logic
+  const lastPhase=s.lastCompletedId?READINGS.find(r=>r.id===s.lastCompletedId)?.phase:null;
+  const nextPhase=nextUnread?.phase;
+  const showPhaseMsg=nextUnread&&lastPhase&&nextPhase&&lastPhase!==nextPhase&&s.dismissedPhaseMsg!==nextPhase;
 
   const completeReading=(id,note)=>{
     const wasMissed=s.lastCompletedId!==null&&id!==(s.lastCompletedId+1)&&!s.completedReadings.includes(s.lastCompletedId+1);
@@ -414,26 +382,29 @@ export default function ReturnReadingPlan() {
     setNoteVal("");setTimerDone(false);setTimerStarted(false);setViewingId(null);
   };
 
-  // ── WELCOME ──
-  if(s.screen==="welcome") return(
+  // ── WELCOME ────────────────────────────────────────────────────────────────
+  if(s.screen==="welcome")return(
     <div className="wrap"><style>{css}</style>
       <div className="card anim" style={{textAlign:"center",marginTop:24}}>
         <p className="eyebrow">Christian Layne</p>
         <h1 className="h1" style={{fontSize:30}}>The Return<br/>Reading Plan</h1>
         <div className="gold-line"/>
-        <p className="body" style={{marginBottom:8}}>Most plans fail you because they weren't built for where you are.</p>
+        <p className="body" style={{marginBottom:8}}>A 30-reading Bible plan built specifically for Christians who've drifted and want to come back to God's Word consistently.</p>
+        <p className="body" style={{marginBottom:6}}>Most plans fail you because they weren't built for where you are.</p>
         <p className="body" style={{marginBottom:28,fontWeight:600,color:C.linen}}>This one was.</p>
         <button className="btn" onClick={()=>upd({screen:"onboarding",onboardingStep:0})}>Begin →</button>
+        <p className="muted" style={{marginTop:10}}>Takes about 5 minutes to set up</p>
         {s.completedReadings.length>0&&<button className="btn-g" style={{marginTop:10}} onClick={()=>upd({screen:"plan"})}>Continue where I left off</button>}
+        <Footer/>
       </div>
     </div>
   );
 
-  // ── ONBOARDING ──
+  // ── ONBOARDING ─────────────────────────────────────────────────────────────
   if(s.screen==="onboarding"){
     const step=s.onboardingStep;
 
-    if(step===0) return(
+    if(step===0)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
           <p className="eyebrow">Step 1 of 6 — Identity</p>
@@ -445,13 +416,15 @@ export default function ReturnReadingPlan() {
           </div>
           <HoldBtn label="Hold to confirm — I said it" holdLabel="Confirming..." duration={3000} onComplete={()=>upd({onboardingStep:1})}/>
           <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
+          <Footer/>
         </div>
       </div>
     );
 
-    if(step===1) return(
+    if(step===1)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({onboardingStep:0})}>← Back</button>
           <p className="eyebrow">Step 2 of 6 — Anchor</p>
           <h2 className="h2">When will you read?</h2>
           <p className="body" style={{marginBottom:8}}>The most reliable way to build a habit is to attach it to something you already do every day without thinking. Don't pick a time. Pick a trigger.</p>
@@ -459,13 +432,15 @@ export default function ReturnReadingPlan() {
           <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>"I will read immediately after..."</p>
           <textarea className="inp" rows={2} placeholder="e.g. my morning coffee, brushing my teeth, getting into bed..." value={s.anchor} onChange={e=>upd({anchor:e.target.value})}/>
           <div style={{marginTop:18}}><button className="btn" disabled={!s.anchor.trim()} onClick={()=>upd({onboardingStep:2})}>Continue</button></div>
+          <Footer/>
         </div>
       </div>
     );
 
-    if(step===2) return(
+    if(step===2)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({onboardingStep:1})}>← Back</button>
           <p className="eyebrow">Step 3 of 6 — Location</p>
           <h2 className="h2">Where will your Bible live?</h2>
           <p className="body" style={{marginBottom:8}}>Research shows the single biggest predictor of whether you read is whether your Bible is visible before your phone is.</p>
@@ -473,13 +448,15 @@ export default function ReturnReadingPlan() {
           <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>"My Bible will live at..."</p>
           <textarea className="inp" rows={2} placeholder="e.g. on top of my phone on my nightstand, on the kitchen counter..." value={s.location} onChange={e=>upd({location:e.target.value})}/>
           <div style={{marginTop:18}}><button className="btn" disabled={!s.location.trim()} onClick={()=>upd({onboardingStep:3})}>Continue</button></div>
+          <Footer/>
         </div>
       </div>
     );
 
-    if(step===3) return(
+    if(step===3)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({onboardingStep:2})}>← Back</button>
           <p className="eyebrow">Step 4 of 6 — Pairing</p>
           <h2 className="h2">What will you pair with reading?</h2>
           <p className="body" style={{marginBottom:8}}>Pairing a habit with something you already enjoy creates an immediate reward before the spiritual payoff arrives. Over time your brain starts associating that sensory experience with opening your Bible.</p>
@@ -489,13 +466,15 @@ export default function ReturnReadingPlan() {
             <button className="btn" onClick={()=>upd({onboardingStep:4})}>Continue</button>
             <button className="btn-g" onClick={()=>upd({onboardingStep:4})}>Skip</button>
           </div>
+          <Footer/>
         </div>
       </div>
     );
 
-    if(step===4) return(
+    if(step===4)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({onboardingStep:3})}>← Back</button>
           <p className="eyebrow">Step 5 of 6 — The Rule</p>
           <h2 className="h2">The only rule</h2>
           <p className="body" style={{marginBottom:8}}>This plan is built for missing days. Missing is expected — not a failure. The only failure is what comes after missing: letting one missed day become two.</p>
@@ -506,54 +485,67 @@ export default function ReturnReadingPlan() {
           </div>
           <HoldBtn label="Hold to confirm — I understand" holdLabel="Locking it in..." duration={3000} onComplete={()=>upd({onboardingStep:5})}/>
           <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
+          <Footer/>
         </div>
       </div>
     );
 
-    if(step===5) return(
+    if(step===5)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({onboardingStep:4})}>← Back</button>
           <p className="eyebrow">Step 6 of 6 — Why One Verse</p>
           <h2 className="h2">{PHASE_WHY[1].title}</h2>
           {PHASE_WHY[1].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:12}}>{p}</p>)}
           <div style={{marginTop:8}}><button className="btn" onClick={()=>upd({screen:"quiz"})}>I'm ready →</button></div>
+          <Footer/>
         </div>
       </div>
     );
   }
 
-  // ── QUIZ ──
+  // ── QUIZ ────────────────────────────────────────────────────────────────────
   if(s.screen==="quiz"){
     const q=QUIZ[quizQ];
     return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
+          <button className="btn-back" onClick={()=>upd({screen:"onboarding",onboardingStep:5})}>← Back</button>
           <p className="eyebrow">Quick Check — {quizQ+1} of {QUIZ.length}</p>
           <h2 className="h2" style={{marginBottom:20}}>{q.q}</h2>
           {q.options.map((opt,i)=>(
             <button key={i}
               className={`qopt${quizAns===i?(i===q.correct?" ok":" no"):""}${quizWrong.includes(i)?" no":""}`}
+              disabled={quizCooldown&&quizAns===null}
               onClick={()=>{
-                if(quizAns!==null)return;
+                if(quizAns!==null||quizCooldown)return;
                 setQuizAns(i);
                 if(i===q.correct){
                   setTimeout(()=>{
                     if(quizQ<QUIZ.length-1){setQuizQ(quizQ+1);setQuizAns(null);setQuizWrong([]);}
                     else upd({screen:"day1prompt"});
                   },700);
-                }else{setQuizWrong(p=>[...p,i]);setTimeout(()=>setQuizAns(null),600);}
-              }}>{opt}</button>
+                }else{
+                  setQuizWrong(p=>[...p,i]);
+                  setQuizCooldown(true);
+                  setTimeout(()=>{setQuizAns(null);setQuizCooldown(false);},3000);
+                }
+              }}>{opt}
+            </button>
           ))}
-          {quizAns!==null&&quizAns===QUIZ[quizQ].correct&&<p style={{color:C.green,fontSize:12,fontWeight:600,marginTop:6,textAlign:"center"}}>Correct ✓</p>}
+          {quizAns!==null&&quizAns===q.correct&&<p style={{color:C.green,fontSize:12,fontWeight:600,marginTop:6,textAlign:"center"}}>Correct ✓</p>}
+          {quizCooldown&&<p style={{color:C.red,fontSize:11,marginTop:6,textAlign:"center"}}>Not quite — try again in a moment.</p>}
+          <Footer/>
         </div>
       </div>
     );
   }
 
-  // ── DAY 1 PROMPT ──
-  if(s.screen==="day1prompt") return(
+  // ── DAY 1 PROMPT ────────────────────────────────────────────────────────────
+  if(s.screen==="day1prompt")return(
     <div className="wrap"><style>{css}</style>
       <div className="card anim">
+        <button className="btn-back" onClick={()=>upd({screen:"quiz"})}>← Back</button>
         <p className="eyebrow">Before Reading 1</p>
         <h2 className="h2">What makes today your day one?</h2>
         <p className="body" style={{marginBottom:20}}>I'll show this back to you on Reading 30. It doesn't have to be profound — just honest.</p>
@@ -562,13 +554,17 @@ export default function ReturnReadingPlan() {
         <input className="inp" placeholder="First name..." value={s.firstName} onChange={e=>upd({firstName:e.target.value})}/>
         <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
         <input className="inp" type="email" placeholder="email@example.com" value={s.email} onChange={e=>upd({email:e.target.value})}/>
-        <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you.</p>
-        <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={()=>{ fetch(`https://formspree.io/f/${FORM_ID}`,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why})}).catch(()=>{}); upd({screen:"plan"}); }}>Your plan is ready →</button>
+        <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you. Use a regular browser window — not incognito — so your progress stays saved.</p>
+        <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={()=>{
+          submitForm({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why,anchor:s.anchor,location:s.location,pairing:s.pairing});
+          upd({screen:"plan"});
+        }}>Your plan is ready →</button>
+        <Footer/>
       </div>
     </div>
   );
 
-  // ── CELEBRATION ──
+  // ── CELEBRATION ─────────────────────────────────────────────────────────────
   if(s.screen==="celebration"){
     const cel=celebration;
     return(
@@ -589,45 +585,44 @@ export default function ReturnReadingPlan() {
               {s.badges.map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?<span key={bid} className="badge">{b.emoji} {b.label}</span>:null;})}
             </div>
           )}
-          <button className="btn" onClick={()=>{
-            const nid=s.completedReadings.length>=30?null:Math.max(...s.completedReadings)+1;
-            if(s.completedReadings.length>=30)upd({screen:"complete"});
-            else if(nid===8&&!s.accountabilityName)upd({screen:"accountability"});
-            else upd({screen:"plan"});
-          }}>Continue →</button>
+          <button className="btn" onClick={()=>upd({screen:"plan"})}>Continue →</button>
+          <Footer/>
         </div>
       </div>
     );
   }
 
-  // ── ACCOUNTABILITY ──
-  if(s.screen==="accountability") return(
+  // ── ACCOUNTABILITY ──────────────────────────────────────────────────────────
+  if(s.screen==="accountability")return(
     <div className="wrap"><style>{css}</style>
       <Confetti active={confetti}/>
       <div className="card anim">
-        <p className="eyebrow">Reading 7 Complete</p>
+        <p className="eyebrow">Reading 7 Complete ⭐</p>
         <h2 className="h2">Seven times you showed up.</h2>
         <div className="gold-line"/>
         <p className="body" style={{marginBottom:8}}>Research shows that people who tell someone else about a commitment are significantly more likely to follow through than people who keep it to themselves.</p>
-        <p className="body" style={{marginBottom:20}}>Just tell one person: <em style={{color:C.linen}}>"I've been reading my Bible consistently for the first time in a long time."</em></p>
+        <p className="body" style={{marginBottom:8}}>I know this might feel uncomfortable. If you've been away from God's Word for a while, the last thing you want to do is tell someone about it. You don't have to explain why you're starting. Just tell them this:</p>
+        <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"14px 16px",marginBottom:20}}>
+          <p className="body" style={{fontStyle:"italic",color:C.linen}}>"I've been reading my Bible consistently for the first time in a long time."</p>
+        </div>
         <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>Who will you tell?</p>
         <input className="inp" placeholder="Their name..." value={s.accountabilityName} onChange={e=>upd({accountabilityName:e.target.value})}/>
         <div style={{marginTop:18,display:"flex",flexDirection:"column",gap:10}}>
           <button className="btn" disabled={!s.accountabilityName.trim()} onClick={()=>upd({screen:"plan"})}>Continue to Reading 8</button>
           <button className="btn-g" onClick={()=>upd({screen:"plan"})}>Skip for now</button>
         </div>
+        <Footer/>
       </div>
     </div>
   );
 
-  // ── MIDPOINT ──
-  if(s.screen==="midpoint") return(
+  // ── MIDPOINT ────────────────────────────────────────────────────────────────
+  if(s.screen==="midpoint")return(
     <div className="wrap"><style>{css}</style>
       <div className="stack">
         <Confetti active={confetti}/>
-        <Confetti active={confetti}/>
         <div className="card anim" style={{borderColor:C.gold}}>
-          <p className="eyebrow">Reading 15 Complete</p>
+          <p className="eyebrow">Reading 15 Complete 🏔</p>
           <h2 className="h2">You're past the halfway point.</h2>
           <div className="gold-line"/>
           {PHASE_WHY[4].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:10}}>{p}</p>)}
@@ -638,44 +633,55 @@ export default function ReturnReadingPlan() {
           <p className="h3">A personal audio message for everyone who makes it to Reading 15</p>
           <p className="body" style={{marginBottom:16,marginTop:6}}>Something I recorded specifically for this moment in the plan.</p>
           {s.midpointUnlocked
-            ? <AudioPlayer src={AUDIO_URL}/>
-            : <>
-                <div style={{filter:"blur(6px)",pointerEvents:"none"}}>
-                  <div style={{height:64,background:C.night,borderRadius:12,border:`1px solid ${C.gold}`}}/>
-                </div>
-                <div className="lock-ov">
-                  <span style={{fontSize:28}}>🔒</span>
-                  <p style={{fontSize:13,fontWeight:700,color:C.linen,textAlign:"center",maxWidth:240}}>Share your experience to unlock</p>
-                </div>
-              </>
+            ?<AudioPlayer src={AUDIO_URL}/>
+            :<>
+              <div style={{filter:"blur(6px)",pointerEvents:"none"}}>
+                <div style={{height:64,background:C.night,borderRadius:12,border:`1px solid ${C.gold}`}}/>
+              </div>
+              <div className="lock-ov">
+                <span style={{fontSize:28}}>🔒</span>
+                <p style={{fontSize:13,fontWeight:700,color:C.linen,textAlign:"center",maxWidth:240}}>Share your experience to unlock</p>
+              </div>
+            </>
           }
         </div>
 
         {!s.midpointUnlocked&&(
           <div className="card anim">
-            <MidpointForm
-              savedName={s.firstName}
-              savedEmail={s.email}
+            <SimpleForm
+              title="Unlock the Message"
+              description="Be honest — what's worked, what's been hard. Your answer helps me make this better for the next person. It unlocks the audio message immediately."
+              textLabel="Your experience so far"
+              textPlaceholder="What's working, what's been hard..."
+              submitLabel="Submit & Unlock →"
+              formType="Midpoint Reflection (Reading 15)"
+              extraData={{email:s.email}}
               onSuccess={()=>upd({midpointUnlocked:true})}
             />
           </div>
         )}
 
         <button className="btn" onClick={()=>upd({screen:"plan"})}>Continue to Reading 16 →</button>
+        <Footer/>
       </div>
     </div>
   );
 
-  // ── READING ──
+  // ── READING ─────────────────────────────────────────────────────────────────
   if(s.screen==="reading"){
     const reading=currentReading;
     if(!reading){upd({screen:"plan"});return null;}
     const isReview=s.completedReadings.includes(reading.id);
+    const noteMinLength=20;
+    const noteValid=noteVal.trim().length>=noteMinLength;
     return(
       <div className="wrap"><style>{css}</style>
         <div className="stack">
           <div className="card anim">
-            <p className="eyebrow">Reading {reading.id} of 30{isReview?" — Review":""}</p>
+            <button className="btn-back" onClick={()=>{setViewingId(null);upd({screen:"plan"});}}>← Back to plan</button>
+            <p className="eyebrow" style={{color:PHASE_COLORS[reading.phase]}}>
+              {PHASE_LABELS[reading.phase]} · Reading {reading.id} of 30{isReview?" — Review":""}
+            </p>
             <h2 className="h2">{reading.ref}</h2>
             <div className="gold-line"/>
             <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"16px 14px",marginBottom:16}}>
@@ -694,13 +700,17 @@ export default function ReturnReadingPlan() {
             <div className="card anim">
               <p className="eyebrow" style={{marginBottom:8}}>After Reading</p>
               <p className="h3">What's one thing you noticed?</p>
-              <p className="muted" style={{marginBottom:14}}>A word, a phrase, a question — anything. One sentence is enough.</p>
-              <textarea className="inp" rows={3} placeholder="Write anything that stood out..." value={noteVal} onChange={e=>setNoteVal(e.target.value)}/>
+              <p className="muted" style={{marginBottom:14}}>A word, a phrase, a question — whatever landed. Write at least a sentence.</p>
+              <textarea className="inp" rows={3} placeholder="A word, a phrase, a question — whatever landed..." value={noteVal} onChange={e=>setNoteVal(e.target.value)}/>
+              {noteVal.length>0&&!noteValid&&(
+                <p className="muted" style={{marginTop:6,color:C.stone}}>Keep going — just a little more.</p>
+              )}
               <div style={{marginTop:14,display:"flex",flexDirection:"column",gap:10}}>
-                <button className="btn" disabled={!noteVal.trim()||(timerStarted&&!timerDone)} onClick={()=>completeReading(reading.id,noteVal)}>
-                  {timerStarted&&!timerDone?"Finish the timer first":"Mark as complete ↑"}
+                <button className="btn"
+                  disabled={!noteValid||(timerStarted&&!timerDone)}
+                  onClick={()=>completeReading(reading.id,noteVal)}>
+                  {timerStarted&&!timerDone?"Finish the timer first":!noteValid?"Write a bit more first":"Mark as complete ↑"}
                 </button>
-                <button className="btn-g" onClick={()=>{setViewingId(null);upd({screen:"plan"});}}>← Back to plan</button>
               </div>
             </div>
           )}
@@ -709,30 +719,33 @@ export default function ReturnReadingPlan() {
             <div className="card anim">
               <p className="eyebrow" style={{marginBottom:8}}>Your Note</p>
               <p className="body" style={{fontStyle:"italic",color:C.linen}}>"{s.notes[reading.id]||"No note recorded."}"</p>
-              <div style={{marginTop:16}}><button className="btn-g" onClick={()=>{setViewingId(null);upd({screen:"plan"});}}>← Back to plan</button></div>
             </div>
           )}
+          <Footer/>
         </div>
       </div>
     );
   }
 
-  // ── PLAN DASHBOARD ──
+  // ── PLAN DASHBOARD ──────────────────────────────────────────────────────────
   if(s.screen==="plan"){
     const next=READINGS.find(r=>!s.completedReadings.includes(r.id));
-    const lastPhase=s.lastCompletedId?READINGS.find(r=>r.id===s.lastCompletedId)?.phase:null;
-    const nextPhase=next?.phase;
-    const phaseJump=lastPhase&&nextPhase&&lastPhase!==nextPhase;
+    // Build share text
+    const shareText=`I just completed Reading ${s.completedReadings.length} of 30 on The Return Reading Plan and my return count is ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return-reading-plan.vercel.app`;
+
     return(
       <div className="wrap"><style>{css}</style>
         <Confetti active={confetti}/>
         <div className="stack">
+
+          {/* Header */}
           <div className="card anim" style={{textAlign:"center",padding:"22px 20px"}}>
             <p className="eyebrow">The Return Reading Plan</p>
             <h1 className="h1" style={{fontSize:20,marginBottom:4}}>{next?`Reading ${next.id} of 30`:"Complete — keep going"}</h1>
             <p className="muted">{s.completedReadings.length} readings complete</p>
           </div>
 
+          {/* Return counter */}
           <div className="card anim">
             <p className="eyebrow" style={{marginBottom:10}}>Your Return Count</p>
             <div style={{display:"flex",alignItems:"center",gap:16,background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:12,padding:"14px 18px"}}>
@@ -749,6 +762,7 @@ export default function ReturnReadingPlan() {
             )}
           </div>
 
+          {/* Badges */}
           {s.badges.length>0&&(
             <div className="card anim">
               <p className="eyebrow" style={{marginBottom:10}}>Badges Earned</p>
@@ -758,34 +772,53 @@ export default function ReturnReadingPlan() {
             </div>
           )}
 
+          {/* Progress path with phase colors */}
           <div className="card anim">
-            <p className="eyebrow" style={{marginBottom:10}}>Your Path</p>
+            <p className="eyebrow" style={{marginBottom:4}}>Your Path</p>
+            <p className="muted" style={{marginBottom:12}}>Each color represents a phase. Tap any completed reading to review your note.</p>
             <div className="path-grid">
               {READINGS.map(r=>{
                 const done=s.completedReadings.includes(r.id),isCur=next?.id===r.id;
                 return(
-                  <div key={r.id} className={`dot ${done?"done":isCur?"cur":"fut"}`}
+                  <div key={r.id}
+                    className={`dot ${done?"done":isCur?"cur":"fut"}`}
+                    style={done?{background:PHASE_COLORS[r.phase]}:{}}
                     onClick={()=>{if(done||isCur){setViewingId(r.id);setTimerDone(false);setTimerStarted(false);upd({screen:"reading"});}}}
-                    title={done?`Reading ${r.id} — tap to review`:isCur?`Reading ${r.id} — tap to begin`:`Reading ${r.id}`}>
-                    {r.id}
+                    title={done?`Reading ${r.id} (${PHASE_LABELS[r.phase]}) — tap to review`:isCur?`Reading ${r.id} — tap to begin`:`Reading ${r.id} — locked`}>
+                    {done?"✓":r.id}
                   </div>
                 );
               })}
             </div>
-            <p className="muted" style={{marginTop:10,textAlign:"center"}}>Tap any completed reading to review your note.</p>
+            {/* Phase legend */}
+            <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:14}}>
+              {[1,2,3,4,5].map(ph=>(
+                <div key={ph} style={{display:"flex",alignItems:"center",gap:5}}>
+                  <div style={{width:10,height:10,borderRadius:"50%",background:PHASE_COLORS[ph]}}/>
+                  <span className="muted" style={{fontSize:10}}>Phase {ph}</span>
+                </div>
+              ))}
+            </div>
+            <p className="muted" style={{marginTop:10,textAlign:"center"}}>{s.completedReadings.length} of 30 readings complete</p>
           </div>
 
-          {next&&phaseJump&&PHASE_WHY[nextPhase]&&(
+          {/* Phase transition message — persistent until dismissed */}
+          {showPhaseMsg&&PHASE_WHY[nextPhase]&&(
             <div className="card anim" style={{borderColor:C.terra}}>
-              <p className="eyebrow" style={{marginBottom:8}}>From Christian</p>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                <p className="eyebrow" style={{marginBottom:0}}>From Christian</p>
+                <button onClick={()=>upd({dismissedPhaseMsg:nextPhase})}
+                  style={{background:"none",border:"none",color:C.stone,cursor:"pointer",fontSize:16,lineHeight:1,padding:0}}>×</button>
+              </div>
               <p className="h3" style={{marginBottom:10}}>{PHASE_WHY[nextPhase].title}</p>
               {PHASE_WHY[nextPhase].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:10}}>{p}</p>)}
             </div>
           )}
 
+          {/* Next reading */}
           {next&&(
-            <div className="card anim" style={{borderColor:C.terra}}>
-              <p className="eyebrow" style={{marginBottom:6}}>Up Next</p>
+            <div className="card anim" style={{borderColor:PHASE_COLORS[next.phase]}}>
+              <p className="eyebrow" style={{marginBottom:6,color:PHASE_COLORS[next.phase]}}>{PHASE_LABELS[next.phase]}</p>
               <h2 className="h2" style={{marginBottom:4}}>{next.ref}</h2>
               <p className="body" style={{marginBottom:18,color:C.stone}}>{next.note}</p>
               <button className="btn" onClick={()=>{setViewingId(null);setTimerDone(false);setTimerStarted(false);upd({screen:"reading"});}}>
@@ -794,6 +827,18 @@ export default function ReturnReadingPlan() {
             </div>
           )}
 
+          {/* Share */}
+          {s.completedReadings.length>=1&&(
+            <div className="card anim" style={{padding:"16px 20px"}}>
+              <p style={{fontSize:10,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Share Your Progress</p>
+              <p className="muted" style={{marginBottom:10}}>Copy this and send it to someone who needs to come back.</p>
+              <button className="btn-g" onClick={()=>navigator.clipboard?.writeText(shareText).then(()=>alert("Copied!"))}>
+                Copy my progress to share
+              </button>
+            </div>
+          )}
+
+          {/* Setup reminder */}
           <div className="card anim" style={{padding:"16px 20px"}}>
             <p style={{fontSize:10,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Your Setup</p>
             <p className="body" style={{fontSize:12}}>📖 After: <span style={{color:C.linen}}>{s.anchor||"—"}</span></p>
@@ -804,18 +849,19 @@ export default function ReturnReadingPlan() {
           <div style={{textAlign:"center",padding:"10px 0",borderTop:`1px solid ${C.nightBorder}`}}>
             <p style={{fontSize:11,fontWeight:700,color:C.stone}}>The only rule: never miss twice.</p>
           </div>
+          <Footer/>
         </div>
       </div>
     );
   }
 
-  // ── COMPLETE ──
-  if(s.screen==="complete") return(
+  // ── COMPLETE ────────────────────────────────────────────────────────────────
+  if(s.screen==="complete")return(
     <div className="wrap"><style>{css}</style>
       <Confetti active={confetti}/>
       <div className="stack">
         <div className="card anim" style={{textAlign:"center"}}>
-          <p className="eyebrow">Reading 30 Complete</p>
+          <p className="eyebrow">Reading 30 Complete ✝</p>
           <h1 className="h1">You returned.</h1>
           <div className="gold-line"/>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:20}}>
@@ -834,27 +880,51 @@ export default function ReturnReadingPlan() {
           <div className="card anim" style={{borderColor:C.gold}}>
             <p className="eyebrow" style={{color:C.gold,marginBottom:8}}>On Reading 1, you said...</p>
             <p className="body" style={{fontStyle:"italic",color:C.linen,marginBottom:12}}>"{s.day1Why}"</p>
-            <hr className="divider"/>
+            <hr style={{border:"none",borderTop:`1px solid ${C.nightBorder}`,margin:"12px 0"}}/>
             <p className="body">How does that feel now?</p>
           </div>
         )}
 
         <div className="card anim">
           {s.completionSubmitted
-            ? <div style={{textAlign:"center",padding:"16px 0"}}><p style={{fontSize:22,marginBottom:8}}>✓</p><p className="body" style={{color:C.linen}}>Thank you. Your story matters.</p></div>
-            : <CompletionForm
-                savedName={s.firstName}
-                savedEmail={s.email}
-                day1Why={s.day1Why}
-                returnCount={s.returnCount}
-                badges={s.badges}
-                onSuccess={()=>upd({completionSubmitted:true})}
-              />
+            ?<div style={{textAlign:"center",padding:"16px 0"}}><p style={{fontSize:22,marginBottom:8}}>✓</p><p className="body" style={{color:C.linen}}>Thank you. Your story matters.</p></div>
+            :<SimpleForm
+              title="Would you share what happened?"
+              description="How many days did you end up reading? Did this plan help? Would you recommend it? Your story helps the next person who needs to come back."
+              textLabel="Your honest experience"
+              textPlaceholder="What changed..."
+              submitLabel="Send my story →"
+              formType="Day 30 Testimonial"
+              extraData={{email:s.email,"day1-why":s.day1Why,"return-count":s.returnCount,badges:s.badges.join(", ")}}
+              onSuccess={()=>upd({completionSubmitted:true})}
+            />
           }
         </div>
 
+        {/* Share */}
+        <div className="card anim" style={{padding:"16px 20px"}}>
+          <p style={{fontSize:10,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Share Your Return</p>
+          <p className="muted" style={{marginBottom:10}}>Copy this and send it to someone who needs to come back to God's Word.</p>
+          <button className="btn-g" onClick={()=>navigator.clipboard?.writeText(`I just completed The Return Reading Plan — 30 readings back in God's Word after being away. My return count was ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return-reading-plan.vercel.app`).then(()=>alert("Copied!"))}>
+            Copy to share
+          </button>
+        </div>
+
         <button className="btn" onClick={()=>upd({screen:"plan"})}>Keep going →</button>
-        <button className="btn-g" onClick={()=>{const f=freshState();saveState(f);setS(f);}}>Start a new journey</button>
+
+        {/* Reset with confirmation */}
+        {!s.confirmReset
+          ?<button className="btn-g" onClick={()=>upd({confirmReset:true})}>Start a new journey</button>
+          :<div className="card anim" style={{borderColor:C.red}}>
+            <p className="h3" style={{color:C.red,marginBottom:8}}>Are you sure?</p>
+            <p className="body" style={{marginBottom:16}}>This will reset all your progress, return count, and badges. This cannot be undone.</p>
+            <div style={{display:"flex",gap:10}}>
+              <button className="btn-g" style={{flex:1}} onClick={()=>upd({confirmReset:false})}>Cancel</button>
+              <button className="btn" style={{flex:1,background:C.red}} onClick={()=>{const f=freshState();saveState(f);setS(f);}}>Yes, reset</button>
+            </div>
+          </div>
+        }
+        <Footer/>
       </div>
     </div>
   );
