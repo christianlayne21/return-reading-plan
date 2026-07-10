@@ -398,8 +398,6 @@ export default function ReturnReadingPlan() {
     if(newCompleted.length>=7&&!earned.includes("week_one"))earned.push("week_one");
     if(newCompleted.length>=15&&!earned.includes("halfway"))earned.push("halfway");
     if(newCompleted.length>=30&&!earned.includes("the_return"))earned.push("the_return");
-    // Fire confetti immediately for milestones
-    if(isMilestone)boom();
     setCountAnim(true);setTimeout(()=>setCountAnim(false),600);
     const msg=wasMissed?"You missed a day. You came back. That's the whole plan."
       :newCompleted.length===7?"Seven readings. The habit is forming. Keep going."
@@ -411,11 +409,8 @@ export default function ReturnReadingPlan() {
     if(id===7&&!s.accountabilityName)next="accountability";
     else if(id===15)next="midpoint";
     else if(id===30)next="complete";
-    // Delay screen transition on milestones so confetti is visible first
-    const delay=isMilestone?1200:0;
-    setTimeout(()=>{
-      upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:wasMissed,screen:next});
-    },delay);
+    upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:wasMissed,screen:next});
+    if(isMilestone)setTimeout(()=>boom(),100);
     setNoteVal("");setTimerDone(false);setTimerStarted(false);setViewingId(null);
   };
 
@@ -608,6 +603,7 @@ export default function ReturnReadingPlan() {
   // ── ACCOUNTABILITY ──
   if(s.screen==="accountability") return(
     <div className="wrap"><style>{css}</style>
+      <Confetti active={confetti}/>
       <div className="card anim">
         <p className="eyebrow">Reading 7 Complete</p>
         <h2 className="h2">Seven times you showed up.</h2>
@@ -628,6 +624,7 @@ export default function ReturnReadingPlan() {
   if(s.screen==="midpoint") return(
     <div className="wrap"><style>{css}</style>
       <div className="stack">
+        <Confetti active={confetti}/>
         <Confetti active={confetti}/>
         <div className="card anim" style={{borderColor:C.gold}}>
           <p className="eyebrow">Reading 15 Complete</p>
