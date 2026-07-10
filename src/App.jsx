@@ -98,8 +98,9 @@ const css = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:${C.night};color:${C.parchment};font-family:'Montserrat',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
 .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 64px;background:${C.night};}
-.card{width:100%;max-width:480px;background:${C.nightCard};border:1px solid ${C.nightBorder};border-radius:16px;padding:28px 24px;}
-.stack{width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px;}
+.card{width:100%;max-width:600px;background:${C.nightCard};border:1px solid ${C.nightBorder};border-radius:16px;padding:28px 24px;}
+.stack{width:100%;max-width:600px;display:flex;flex-direction:column;gap:14px;}
+@media(min-width:680px){.card{padding:36px 40px;}.wrap{padding:40px 32px 80px;}}
 .eyebrow{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:${C.terra};margin-bottom:10px;}
 .h1{font-size:26px;font-weight:800;color:${C.linen};line-height:1.2;margin-bottom:14px;}
 .h2{font-size:19px;font-weight:700;color:${C.linen};line-height:1.3;margin-bottom:10px;}
@@ -391,11 +392,14 @@ export default function ReturnReadingPlan() {
     const newComeback=wasMissed?s.comebackCount+1:s.comebackCount;
     const newNotes={...s.notes,[id]:note};
     const earned=[...s.badges];
+    const isMilestone=newCompleted.length===7||newCompleted.length===15||newCompleted.length===30;
     if(wasMissed&&!earned.includes("first_return"))earned.push("first_return");
     if(newComeback>=3&&!earned.includes("three_comebacks"))earned.push("three_comebacks");
-    if(newCompleted.length>=7&&!earned.includes("week_one")){earned.push("week_one");boom();}
-    if(newCompleted.length>=15&&!earned.includes("halfway")){earned.push("halfway");boom();}
-    if(newCompleted.length>=30&&!earned.includes("the_return")){earned.push("the_return");boom();}
+    if(newCompleted.length>=7&&!earned.includes("week_one"))earned.push("week_one");
+    if(newCompleted.length>=15&&!earned.includes("halfway"))earned.push("halfway");
+    if(newCompleted.length>=30&&!earned.includes("the_return"))earned.push("the_return");
+    // Fire confetti immediately for milestones
+    if(isMilestone)boom();
     setCountAnim(true);setTimeout(()=>setCountAnim(false),600);
     const msg=wasMissed?"You missed a day. You came back. That's the whole plan."
       :newCompleted.length===7?"Seven readings. The habit is forming. Keep going."
@@ -407,7 +411,11 @@ export default function ReturnReadingPlan() {
     if(id===7&&!s.accountabilityName)next="accountability";
     else if(id===15)next="midpoint";
     else if(id===30)next="complete";
-    upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:wasMissed,screen:next});
+    // Delay screen transition on milestones so confetti is visible first
+    const delay=isMilestone?1200:0;
+    setTimeout(()=>{
+      upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:wasMissed,screen:next});
+    },delay);
     setNoteVal("");setTimerDone(false);setTimerStarted(false);setViewingId(null);
   };
 
@@ -560,7 +568,7 @@ export default function ReturnReadingPlan() {
         <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
         <input className="inp" type="email" placeholder="email@example.com" value={s.email} onChange={e=>upd({email:e.target.value})}/>
         <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you.</p>
-        <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={()=>upd({screen:"plan"})}>Your plan is ready →</button>
+        <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={()=>{ fetch(`https://formspree.io/f/${FORM_ID}`,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why})}).catch(()=>{}); upd({screen:"plan"}); }}>Your plan is ready →</button>
       </div>
     </div>
   );
