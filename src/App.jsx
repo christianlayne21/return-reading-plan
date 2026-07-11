@@ -185,7 +185,7 @@ async function submitForm(data){
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 function calcRun(completedReadings){
-  if(!completedReadings.length)return 0;
+  if(!completedReadings.length)return{current:0,best:0};
   const sorted=[...completedReadings].sort((a,b)=>a-b);
   let run=1,max=1;
   for(let i=1;i<sorted.length;i++){
@@ -642,7 +642,7 @@ export default function ReturnReadingPlan(){
   // ── ONBOARDING ───────────────────────────────────────────────────────────────
   if(s.screen==="onboarding"){
     const step=s.onboardingStep;
-    const TOTAL_STEPS=6;
+    
     const words=["I","am","someone","who","returns","to","God's","Word."];
 
     // Progress bar component
@@ -652,7 +652,7 @@ export default function ReturnReadingPlan(){
         <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:C.night,padding:"24px 24px 48px"}}>
           <style>{css}</style>
           <div style={{width:"100%",maxWidth:600}}>
-            <ProgressBar current={1} total={TOTAL_STEPS}/>
+            <ProgressBar current={1} total={4}/>
             <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase",color:C.terra,textAlign:"center",marginBottom:40}}>Declaration</p>
             <p style={{fontSize:13,color:C.stone,textAlign:"center",marginBottom:32,lineHeight:1.7}}>Before anything else — one declaration.<br/>Not how you feel. Not who you've been.<br/>Who you're choosing to be right now.</p>
             <div style={{textAlign:"center",marginBottom:48,minHeight:80,display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0 8px",alignItems:"center"}}>
@@ -713,7 +713,7 @@ export default function ReturnReadingPlan(){
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
               {ANCHORS.map(a=>(
                 <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
-                  selected={s.anchor===a.label||(a.label==="Something else"&&customAnchor)}
+                  selected={s.anchor===a.label||(a.label==="Something else"&&!["Morning coffee","Brushing teeth","Getting into bed","After lunch","After work"].includes(s.anchor)&&s.anchor!=="")}
                   onClick={()=>{if(a.label==="Something else")upd({anchor:""});else upd({anchor:a.label});}}/>
               ))}
             </div>
@@ -727,7 +727,7 @@ export default function ReturnReadingPlan(){
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
               {LOCATIONS.map(a=>(
                 <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
-                  selected={s.location===a.label||(a.label==="Somewhere else"&&customLoc)}
+                  selected={s.location===a.label||(a.label==="Somewhere else"&&!["On my nightstand","Kitchen counter","My desk","Living room couch","Bathroom counter"].includes(s.location)&&s.location!=="")}
                   onClick={()=>{if(a.label==="Somewhere else")upd({location:""});else upd({location:a.label});}}/>
               ))}
             </div>
@@ -742,7 +742,7 @@ export default function ReturnReadingPlan(){
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
               {PAIRINGS.map(a=>(
                 <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
-                  selected={s.pairing===a.label||(a.label==="Something else"&&customPair)}
+                  selected={s.pairing===a.label||(a.label==="Something else"&&!["Coffee","Tea","A candle","My specific chair","Silence"].includes(s.pairing)&&s.pairing!=="")}
                   onClick={()=>{if(a.label==="Something else")upd({pairing:""});else upd({pairing:a.label});}}/>
               ))}
             </div>
