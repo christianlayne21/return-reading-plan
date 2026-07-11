@@ -9,7 +9,10 @@ const C = {
   phase1:"#A96E55", phase2:"#8A7A55", phase3:"#557A6E", phase4:"#555A7A", phase5:"#7A5578",
 };
 
-const AUDIO_URL = "https://bible-comeback-plan.vercel.app/halfway-message.mp3";
+const AUDIO_URL_READING1  = "https://bible-comeback-plan.vercel.app/reading-1-message.mp3";
+const AUDIO_URL_HALFWAY   = "https://bible-comeback-plan.vercel.app/halfway-message.mp3";
+const AUDIO_URL_READING22 = "https://bible-comeback-plan.vercel.app/reading-22-message.mp3";
+const AUDIO_URL_READING30 = "https://bible-comeback-plan.vercel.app/reading-30-message.mp3";
 const FORM_ID   = "xnjkerpn";
 
 const READINGS = [
@@ -883,6 +886,9 @@ export default function ReturnReadingPlan(){
         <p className="eyebrow">Reading 22 Complete 🛡</p>
         <h2 className="h2">You've proven you can do this.</h2>
         <div className="gold-line"/>
+        <div style={{marginBottom:20}}>
+          <AudioPlayer src={AUDIO_URL_READING22}/>
+        </div>
         {s.vision30&&(
           <div style={{background:C.goldDim,border:`1px solid ${C.gold}44`,borderRadius:10,padding:"12px 14px",marginBottom:16}}>
             <p style={{fontSize:10,fontWeight:600,color:C.gold,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>On day one, you said you wanted...</p>
@@ -921,7 +927,7 @@ export default function ReturnReadingPlan(){
           <p className="eyebrow" style={{marginBottom:8}}>From Christian — Halfway Message</p>
           <p className="h3">A personal audio message for everyone who makes it to Reading 15</p>
           <p className="body" style={{marginBottom:16,marginTop:6}}>Something I recorded specifically for this moment in the plan.</p>
-          {s.midpointUnlocked?<AudioPlayer src={AUDIO_URL}/>:<><div style={{filter:"blur(6px)",pointerEvents:"none"}}><div style={{height:64,background:C.night,borderRadius:12,border:`1px solid ${C.gold}`}}/></div><div className="lock-ov"><span style={{fontSize:28}}>🔒</span><p style={{fontSize:13,fontWeight:700,color:C.linen,textAlign:"center",maxWidth:240}}>Share your experience to unlock</p></div></>}
+          {s.midpointUnlocked?<AudioPlayer src={AUDIO_URL_HALFWAY}/>:<><div style={{filter:"blur(6px)",pointerEvents:"none"}}><div style={{height:64,background:C.night,borderRadius:12,border:`1px solid ${C.gold}`}}/></div><div className="lock-ov"><span style={{fontSize:28}}>🔒</span><p style={{fontSize:13,fontWeight:700,color:C.linen,textAlign:"center",maxWidth:240}}>Share your experience to unlock</p></div></>}
         </div>
         {!s.midpointUnlocked&&(
           <div className="card anim">
@@ -995,6 +1001,13 @@ export default function ReturnReadingPlan(){
             <p className="eyebrow" style={{color:PHASE_COLORS[reading.phase]}}>{PHASE_LABELS[reading.phase]} · Reading {reading.id} of 30{isReview?" — Review":""}</p>
             <h2 className="h2">{reading.ref}</h2>
             <div className="gold-line"/>
+            {/* Reading 1 audio message */}
+            {reading.id===1&&!isReview&&(
+              <div style={{marginBottom:16}}>
+                <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>A word before you begin</p>
+                <AudioPlayer src={AUDIO_URL_READING1}/>
+              </div>
+            )}
             {/* What this plan is not — Reading 1 only */}
             {reading.id===1&&!isReview&&(
               <div style={{background:C.night,border:`1px solid ${C.terra}`,borderRadius:10,padding:"14px",marginBottom:14}}>
@@ -1266,6 +1279,11 @@ export default function ReturnReadingPlan(){
             <div style={{textAlign:"left"}}><p style={{fontWeight:700,color:C.linen,fontSize:13}}>Total Returns</p><p className="muted">This number never goes backward</p></div>
           </div>
           <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center"}}>{s.badges.map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?<span key={bid} className="badge">{b.emoji} {b.label}</span>:null;})}</div>
+        </div>
+
+        <div className="card anim">
+          <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>A word from Christian</p>
+          <AudioPlayer src={AUDIO_URL_READING30}/>
         </div>
 
         {s.day1Why&&(
