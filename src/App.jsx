@@ -179,6 +179,43 @@ function freshState(){
   };
 }
 
+
+function exportProgress(s){
+  try{
+    const data={
+      completedReadings:s.completedReadings,
+      notes:s.notes,
+      returnCount:s.returnCount,
+      comebackCount:s.comebackCount,
+      badges:s.badges,
+      lastCompletedId:s.lastCompletedId,
+      bestRun:s.bestRun,
+      firstName:s.firstName,
+      email:s.email,
+      day1Why:s.day1Why,
+      vision30:s.vision30||"",
+      anchor:s.anchor,
+      location:s.location,
+      pairing:s.pairing,
+      accountabilityName:s.accountabilityName||"",
+      midpointUnlocked:s.midpointUnlocked,
+      reading5CheckinDone:s.reading5CheckinDone||false,
+      reading11Done:s.reading11Done||false,
+      completionSubmitted:s.completionSubmitted||false,
+      maintenanceDay:s.maintenanceDay||0,
+      lastReadingTimestamp:s.lastReadingTimestamp||null,
+    };
+    return btoa(JSON.stringify(data));
+  }catch{return null;}
+}
+
+function importProgress(code){
+  try{
+    const data=JSON.parse(atob(code.trim()));
+    if(typeof data.returnCount!=="number"||!Array.isArray(data.completedReadings))return null;
+    return{...freshState(),...data,screen:"plan",confirmReset:false,dismissedPhaseMsg:null,longAbsenceShown:false};
+  }catch{return null;}
+}
 async function submitForm(data){
   try{
     const res=await fetch(`https://formspree.io/f/${FORM_ID}`,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(data)});
@@ -461,6 +498,10 @@ export default function ReturnReadingPlan(){
   const [showReading5Checkin,setShowReading5Checkin]=useState(false);
   const [showReading11,setShowReading11]=useState(false);
   const [expRevealed,setExpRevealed]=useState(false);
+  const [showExportImport,setShowExportImport]=useState(false);
+  const [importCode,setImportCode]=useState("");
+  const [importError,setImportError]=useState(false);
+  const [exportCopied,setExportCopied]=useState(false);
   const [longAbsenceDetected,setLongAbsenceDetected]=useState(false);
   // Onboarding animation hooks — must be at top level
   const [wordIndex,setWordIndex]=useState(0);
@@ -560,6 +601,47 @@ export default function ReturnReadingPlan(){
     // Reading 11 micro-encouragement
     if(id===11&&!s.reading11Done){upd({reading11Done:true});setTimeout(()=>setShowReading11(true),100);}
   };
+
+  // ── EXPORT / IMPORT ──────────────────────────────────────────────────────────
+  if(showExportImport)return(
+    <div className="wrap"><style>{css}</style>
+      <div className="stack">
+        <div className="card anim">
+          <button className="btn-back" onClick={()=>{setShowExportImport(false);setImportCode("");setImportError(false);}}>← Back to plan</button>
+          <p className="eyebrow" style={{marginBottom:8}}>Save Your Progress</p>
+          <h2 className="h2">Move to a new device</h2>
+          <div className="gold-line"/>
+          <p className="body" style={{marginBottom:16}}>Your progress is saved on this device. To continue on a different device or browser, copy your progress code below and paste it on the new device.</p>
+
+          <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:8}}>Your progress code</p>
+          <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"12px 14px",marginBottom:12,wordBreak:"break-all"}}>
+            <p style={{fontSize:10,fontFamily:"monospace",color:C.stone,lineHeight:1.6}}>{exportProgress(s)?.substring(0,80)}...</p>
+          </div>
+          <button className="btn" onClick={()=>{
+            const code=exportProgress(s);
+            if(code){
+              navigator.clipboard?.writeText(code).then(()=>{setExportCopied(true);setTimeout(()=>setExportCopied(false),2500);});
+            }
+          }}>{exportCopied?"✓ Copied!":"Copy Progress Code"}</button>
+        </div>
+
+        <div className="card anim">
+          <p className="eyebrow" style={{marginBottom:8}}>Restore Progress</p>
+          <p className="body" style={{marginBottom:14}}>On a new device? Paste your progress code here to restore everything — readings, notes, return count, badges.</p>
+          <textarea className="inp" rows={4} placeholder="Paste your progress code here..." value={importCode} onChange={e=>{setImportCode(e.target.value);setImportError(false);}}/>
+          {importError&&<p style={{color:C.red,fontSize:11,marginTop:6}}>That code doesn't look right. Make sure you copied the full code.</p>}
+          <div style={{marginTop:12}}>
+            <button className="btn" disabled={!importCode.trim()} onClick={()=>{
+              const restored=importProgress(importCode);
+              if(restored){saveState(restored);setS(restored);setShowExportImport(false);setImportCode("");}
+              else setImportError(true);
+            }}>Restore My Progress</button>
+          </div>
+        </div>
+        <Footer/>
+      </div>
+    </div>
+  );
 
   // ── READING 11 MICRO-ENCOURAGEMENT ──────────────────────────────────────────
   if(showReading11)return(
@@ -1251,11 +1333,14 @@ export default function ReturnReadingPlan(){
             </div>
           )}
 
-          {/* Journal + share + maintenance */}
+          {/* Journal + share + maintenance + export */}
           <div className="card anim" style={{padding:"16px 20px"}}>
             <div style={{display:"flex",gap:10,marginBottom:10}}>
               <button className="btn-g" style={{flex:1}} onClick={()=>upd({screen:"journal"})}>📖 Journal ({Object.keys(s.notes).length})</button>
               <button className="btn-g" style={{flex:1}} onClick={()=>navigator.clipboard?.writeText(shareText).then(()=>alert("Copied!"))}>Share</button>
+            </div>
+            <div style={{display:"flex",gap:10,marginBottom:isComplete?10:0}}>
+              <button className="btn-g" style={{flex:1}} onClick={()=>setShowExportImport(true)}>💾 Save / Restore Progress</button>
             </div>
             {isComplete&&(
               <button className="btn-g" onClick={()=>upd({screen:"maintenance"})}>Enter Maintenance Mode →</button>
