@@ -1233,7 +1233,7 @@ export default function ReturnReadingPlan(){
   // ── PLAN DASHBOARD ───────────────────────────────────────────────────────────
   if(s.screen==="plan"){
     const next=READINGS.find(r=>!s.completedReadings.includes(r.id));
-    const shareText=`I just completed Reading ${s.completedReadings.length} of 30 on The Return Reading Plan. My return count is ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return-reading-plan.vercel.app`;
+    const shareText=`I just completed Reading ${s.completedReadings.length} of 30 on The Return Reading Plan. My return count is ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return.christianlayne.co`;
     const isComplete=s.completedReadings.length>=30;
     return(
       <div className="wrap"><style>{css}</style>
@@ -1443,7 +1443,7 @@ export default function ReturnReadingPlan(){
 
         <div className="card anim" style={{padding:"16px 20px"}}>
           <p style={{fontSize:10,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Share Your Return</p>
-          <button className="btn-g" onClick={()=>navigator.clipboard?.writeText(`I just completed The Return Reading Plan — 30 readings back in God's Word. My return count was ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return-reading-plan.vercel.app`).then(()=>alert("Copied!"))}>Copy to share</button>
+          <button className="btn-g" onClick={()=>navigator.clipboard?.writeText(`I just completed The Return Reading Plan — 30 readings back in God's Word. My return count was ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return.christianlayne.co`).then(()=>alert("Copied!"))}>Copy to share</button>
         </div>
 
         {/* What next hand-off */}
