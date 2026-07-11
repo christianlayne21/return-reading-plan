@@ -19,16 +19,16 @@ const READINGS = [
   {id:1,  ref:"Romans 8:1",           verse:'"There is therefore now no condemnation for those who are in Christ Jesus."',                                                                                                   note:"Read it out loud. Then sit in silence for thirty seconds.",                                              minMinutes:1,  phase:1},
   {id:2,  ref:"Hebrews 4:16",         verse:'"Let us then with confidence draw near to the throne of grace, that we may receive mercy and find grace to help in time of need."',                                          note:'Read it twice. Let "confidence" land.',                                                                  minMinutes:1,  phase:1},
   {id:3,  ref:"Psalm 34:18",          verse:'"The Lord is near to the brokenhearted and saves the crushed in spirit."',                                                                                                   note:"Read it slowly. Notice what it says about where God is.",                                                minMinutes:1,  phase:1},
-  {id:4,  ref:"Romans 5:6–8",         verse:'"For while we were still weak, at the right time Christ died for the ungodly... God shows his love for us in that while we were still sinners, Christ died for us."',       note:'Three verses. Let "while we were still sinners" land.',                                                  minMinutes:2,  phase:2},
-  {id:5,  ref:"Lamentations 3:22–23", verse:'"The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness."',                                  note:"His mercies are new every morning — not every streak.",                                                  minMinutes:2,  phase:2},
+  {id:4,  ref:"Romans 5:6–8",         verse:'"For while we were still weak, at the right time Christ died for the ungodly... God shows His love for us in that while we were still sinners, Christ died for us."',       note:'Three verses. Let "while we were still sinners" land.',                                                  minMinutes:2,  phase:2},
+  {id:5,  ref:"Lamentations 3:22–23", verse:'"The steadfast love of the Lord never ceases; His mercies never come to an end; they are new every morning; great is your faithfulness."',                                  note:"His mercies are new every morning — not every streak.",                                                  minMinutes:2,  phase:2},
   {id:6,  ref:"Psalm 32:1–2",         verse:'"Blessed is the one whose transgression is forgiven, whose sin is covered. Blessed is the man against whom the Lord counts no iniquity."',                                  note:'Notice the word "blessed." Read both verses out loud.',                                                  minMinutes:2,  phase:2},
-  {id:7,  ref:"1 John 1:9",           verse:'"If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness."',                                                      note:"One verse. Read it, then sit in silence for thirty seconds.",                                            minMinutes:2,  phase:2},
+  {id:7,  ref:"1 John 1:9",           verse:'"If we confess our sins, He is faithful and just to forgive us our sins and to cleanse us from all unrighteousness."',                                                      note:"One verse. Read it, then sit in silence for thirty seconds.",                                            minMinutes:2,  phase:2},
   {id:8,  ref:"Luke 15:11–24",        verse:"Open your physical Bible to Luke 15:11–24.",                                                                                                                                note:"The Prodigal Son's return. Read slowly. Notice when the father runs.",                                   minMinutes:5,  phase:3},
   {id:9,  ref:"John 21:15–17",        verse:"Open your physical Bible to John 21:15–17.",                                                                                                                                note:"Jesus restores Peter. Three questions — one for every denial. Then an assignment.",                      minMinutes:5,  phase:3},
   {id:10, ref:"Psalm 51:1–12",        verse:"Open your physical Bible to Psalm 51:1–12.",                                                                                                                                note:"David after Bathsheba. The most honest prayer of someone who knew they had failed.",                    minMinutes:5,  phase:3},
   {id:11, ref:"Jonah 3:1–3",          verse:"Open your physical Bible to Jonah 3:1–3.",                                                                                                                                  note:'"The word of the Lord came to Jonah a second time." The second time is the point.',                     minMinutes:5,  phase:3},
   {id:12, ref:"1 Timothy 1:12–16",    verse:"Open your physical Bible to 1 Timothy 1:12–16.",                                                                                                                            note:"Paul's testimony. Chief of sinners. Shown mercy. For exactly this reason.",                             minMinutes:5,  phase:3},
-  {id:13, ref:"Hosea 2:14–15",        verse:"Open your physical Bible to Hosea 2:14–15.",                                                                                                                                note:"God leads his people back through the wilderness and speaks tenderly to them there.",                    minMinutes:5,  phase:3},
+  {id:13, ref:"Hosea 2:14–15",        verse:"Open your physical Bible to Hosea 2:14–15.",                                                                                                                                note:"God leads His people back through the wilderness and speaks tenderly to them there.",                    minMinutes:5,  phase:3},
   {id:14, ref:"Psalm 103:8–14",       verse:"Open your physical Bible to Psalm 103:8–14.",                                                                                                                               note:"He does not deal with us according to our sins. As far as east is from west.",                          minMinutes:5,  phase:3},
   {id:15, ref:"Luke 22:54–62",        verse:"Open your physical Bible to Luke 22:54–62.",                                                                                                                                note:"Peter's denial. Read slowly. Notice the moment Jesus turns and looks at him.",                          minMinutes:5,  phase:3},
   {id:16, ref:"Isaiah 55:1–7",        verse:"Open your physical Bible to Isaiah 55:1–7.",                                                                                                                                note:"Read this as an invitation written specifically for you.",                                               minMinutes:8,  phase:4},
@@ -36,7 +36,7 @@ const READINGS = [
   {id:18, ref:"Joel 2:12–13",         verse:"Open your physical Bible to Joel 2:12–13.",                                                                                                                                 note:"Return to me with all your heart. Rend your hearts and not your garments.",                             minMinutes:8,  phase:4},
   {id:19, ref:"Revelation 2:1–5",     verse:"Open your physical Bible to Revelation 2:1–5.",                                                                                                                             note:"The church that left their first love. Remember, repent, return.",                                       minMinutes:8,  phase:4},
   {id:20, ref:"Isaiah 43:1–4",        verse:"Open your physical Bible to Isaiah 43:1–4.",                                                                                                                                note:"Fear not. I have redeemed you. I have called you by name. You are mine.",                               minMinutes:8,  phase:4},
-  {id:21, ref:"James 4:7–10",         verse:"Open your physical Bible to James 4:7–10.",                                                                                                                                 note:"Draw near to God and he will draw near to you. The promise is directional.",                            minMinutes:8,  phase:4},
+  {id:21, ref:"James 4:7–10",         verse:"Open your physical Bible to James 4:7–10.",                                                                                                                                 note:"Draw near to God and He will draw near to you. The promise is directional.",                            minMinutes:8,  phase:4},
   {id:22, ref:"Romans 8:26–39",       verse:"Open your physical Bible to Romans 8:26–39.",                                                                                                                               note:"Nothing can separate us from the love of God. Read this as the closing argument.",                      minMinutes:10, phase:4},
   {id:23, ref:"Ephesians 1",          verse:"Open your physical Bible to Ephesians 1.",                                                                                                                                  note:"Every spiritual blessing. Chosen. Adopted. Redeemed. Sealed.",                                          minMinutes:12, phase:5},
   {id:24, ref:"Romans 8",             verse:"Open your physical Bible to Romans 8.",                                                                                                                                     note:"You read verse 1 on Reading 1. Now read the whole chapter. It lands differently now.",                  minMinutes:12, phase:5},
@@ -63,7 +63,7 @@ const PHASE_WHY = {
 const WHY_THIS_PASSAGE = {
   1:"Because the first thing your brain needs to hear after years away is not a command — it's a verdict. No condemnation. Now. As you are.",
   2:"Because shame tells you to stay away until you're ready. This verse says come with confidence. Those two things can't both be true. One of them is lying.",
-  3:"Because you're brokenhearted about the distance between where you are and where you want to be with God. This is where God says he is near.",
+  3:"Because you're brokenhearted about the distance between where you are and where you want to be with God. This is where God says He is near.",
   4:"Because the timing matters. Not after you cleaned yourself up. Not after you got consistent. While you were still a sinner. That's when God moved.",
   5:"Because the most dangerous lie in the drift is that God's patience has limits. This verse answers that lie with specific, concrete language. New every morning. Not every perfect week.",
   6:"Because guilt is supposed to lead somewhere — to the relief of forgiveness. This verse is what that relief actually feels like when it lands.",
@@ -73,7 +73,7 @@ const WHY_THIS_PASSAGE = {
   10:"Because David wrote this after the worst thing he ever did. Not before he repented. In the middle of it. This is what honest prayer looks like from inside failure.",
   11:"Because the most important words in this passage are 'a second time.' God came back. That's exactly what you're doing right now.",
   12:"Because Paul called himself the chief of sinners — not as self-deprecation, but as proof. If mercy reached him, the argument for why it can't reach you collapses.",
-  13:"Because God's response to his people's drift wasn't punishment first. It was wilderness — and in the wilderness he spoke tenderly. That's this moment in your life.",
+  13:"Because God's response to His people's drift wasn't punishment first. It was wilderness — and in the wilderness He spoke tenderly. That's this moment in your life.",
   14:"Because you need to hear what God doesn't do. He doesn't deal with you according to your sins. He doesn't repay you according to your iniquities. As far as east is from west.",
   15:"Because Peter's story doesn't end at the denial. It ends at the shore. Jesus made breakfast. That's the God you're returning to.",
   16:"Because this is an invitation, not a command. Come. Everyone who thirsts. Come to the waters. That language is written for you — for someone who has been away and is being called back.",
@@ -81,7 +81,7 @@ const WHY_THIS_PASSAGE = {
   18:"Because repentance isn't a feeling — it's a direction. Rend your hearts, not your garments. God isn't looking for performance. He's looking for honesty.",
   19:"Because the church at Ephesus did everything right and still lost the one thing that mattered — their first love. The call back is the same call you're answering right now.",
   20:"Because God named you before you drifted. I have called you by name. You are mine. Past tense. That hasn't changed.",
-  21:"Because the promise is directional. Draw near and he will draw near. The movement starts with you. But the response is guaranteed.",
+  21:"Because the promise is directional. Draw near and He will draw near. The movement starts with you. But the response is guaranteed.",
   22:"Because after everything — after the drift, the shame, the failed attempts, the silence — nothing has separated you from the love of God. Paul makes the case completely. Read the whole thing.",
   23:"Because before the drift — and during it, and after it — you were chosen, adopted, redeemed, and sealed. None of that changed. This chapter names everything you still are.",
   24:"Because you read verse 1 on Reading 1. No condemnation. Now you read the whole chapter. See what's between verse 1 and verse 39. That's the arc of the entire plan.",
@@ -576,11 +576,40 @@ export default function ReturnReadingPlan(){
     if(newCompleted.length>=30&&!earned.includes("the_return"))earned.push("the_return");
 
     setCountAnim(true);setTimeout(()=>setCountAnim(false),600);
+    const READING_MSGS={
+      1:"One verse. You opened it. That's the whole win today.",
+      2:"Two readings in. The plan is working.",
+      3:"Three. You've proven it's possible.",
+      4:"Four readings. You're building something real.",
+      5:"Five. The anchor habit is forming.",
+      6:"Six readings. Keep going.",
+      7:"Seven readings. The habit is forming. Keep going.",
+      8:"Eight. You're in the restoration stories now.",
+      9:"Nine readings. Jesus restored Peter. He's restoring you.",
+      10:"Ten. David wrote Psalm 51 from inside failure. You just read it from inside your return.",
+      11:"Eleven. The word of the Lord came to Jonah a second time. And to you.",
+      12:"Twelve readings. Paul called himself the chief of sinners. You just read what happened next.",
+      13:"Thirteen. God led His people back through the wilderness. You're in yours.",
+      14:"Fourteen. As far as east is from west.",
+      15:"Halfway. Something has shifted — even if you can't feel it yet.",
+      16:"Sixteen. You just read an invitation written for you.",
+      17:"Seventeen. He rejoices over you with loud singing. Right now.",
+      18:"Eighteen. Return with all your heart. You're doing it.",
+      19:"Nineteen. Remember, repent, return. You're on the third one.",
+      20:"Twenty. He called you by name. That hasn't changed.",
+      21:"Twenty-one. Draw near and He will draw near. You drew near.",
+      22:"Twenty-two. Nothing has separated you from the love of God. Nothing.",
+      23:"Twenty-three. Chosen. Adopted. Redeemed. Sealed. That's who you are.",
+      24:"Twenty-four. You read verse 1 on Reading 1. You just read the whole chapter.",
+      25:"Twenty-five. Put on the new self. You're doing it reading by reading.",
+      26:"Twenty-six. You are surrounded by a cloud of witnesses. You are not alone.",
+      27:"Twenty-seven. Forgetting what lies behind. Straining forward. That's you.",
+      28:"Twenty-eight. One thing you've asked — to be in His presence. Keep asking.",
+      29:"Twenty-nine. Abide. That's the word for what you've been building.",
+      30:"Thirty readings. You returned. That's who you are now.",
+    };
     const msg=wasMissed?"You came back. That's the whole plan."
-      :newCompleted.length===7?"Seven readings. The habit is forming. Keep going."
-      :newCompleted.length===15?"Halfway. Something has shifted — even if you can't feel it yet."
-      :newCompleted.length===30?"Thirty readings. You returned. That's who you are now."
-      :"You showed up. That number never goes backward.";
+      :READING_MSGS[id]||"You showed up. That number never goes backward.";
     setCelebration({msg,returnCount:newReturn,comeback:wasMissed});
 
     let next="celebration";
