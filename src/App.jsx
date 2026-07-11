@@ -469,7 +469,7 @@ export default function ReturnReadingPlan(){
   },[s.screen,s.onboardingStep,wordRevealed,wordIndex]);
 
   useEffect(()=>{
-    if(s.screen!=="onboarding"||s.onboardingStep!==4){setRulePhase(0);return;}
+    if(s.screen!=="onboarding"||s.onboardingStep!==2){setRulePhase(0);return;}
     const t1=setTimeout(()=>setRulePhase(1),600);
     const t2=setTimeout(()=>setRulePhase(2),1800);
     const t3=setTimeout(()=>setRulePhase(3),3200);
@@ -757,8 +757,8 @@ export default function ReturnReadingPlan(){
       );
     }
 
-        // ── STEP 4 — The Rule (full-screen ceremony) ──────────────────────────────
-    if(step===4){
+    // ── STEP 2 — The Rule (full-screen ceremony) ──────────────────────────────
+    if(step===2){
       return(
         <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:C.night,padding:"24px 24px 48px"}}>
           <style>{css}</style>
@@ -775,7 +775,7 @@ export default function ReturnReadingPlan(){
             </div>
             {rulePhase>=3&&(
               <div>
-                <HoldBtn label="Hold to confirm — I understand" holdLabel="Locking it in..." duration={3000} onComplete={()=>upd({onboardingStep:5})}/>
+                <HoldBtn label="Hold to confirm — I understand" holdLabel="Locking it in..." duration={3000} onComplete={()=>upd({onboardingStep:3})}/>
                 <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
               </div>
             )}
@@ -785,8 +785,8 @@ export default function ReturnReadingPlan(){
       );
     }
 
-    // ── STEP 5 — Why One Verse ────────────────────────────────────────────────
-    if(step===5)return(
+    // ── STEP 3 — Why One Verse ────────────────────────────────────────────────
+    if(step===3)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
           <ProgressBar current={4} total={4}/>
@@ -846,8 +846,8 @@ export default function ReturnReadingPlan(){
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
       <input className="inp" type="email" placeholder="email@example.com" value={s.email} onChange={e=>upd({email:e.target.value})}/>
       <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you. Use a regular browser window — not incognito — so your progress stays saved.</p>
-      <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={()=>{
-        submitForm({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why,anchor:s.anchor,location:s.location,pairing:s.pairing});
+      <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={async()=>{
+        await submitForm({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why,anchor:s.anchor,location:s.location,pairing:s.pairing,"vision30":s.vision30||""});
         upd({screen:"plan"});
       }}>Your plan is ready →</button>
       <Footer/>
