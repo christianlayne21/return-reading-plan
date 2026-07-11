@@ -396,6 +396,31 @@ function ComebackScreen({comebackCount,returnCount,onContinue}){
   );
 }
 
+// ── Progress Bar ──────────────────────────────────────────────────────────────
+function ProgressBar({current,total}){
+  return(
+    <div style={{width:"100%",height:3,background:C.nightBorder,borderRadius:2,marginBottom:28,overflow:"hidden"}}>
+      <div style={{height:"100%",background:`linear-gradient(90deg,${C.terra},${C.gold})`,borderRadius:2,width:`${(current/total)*100}%`,transition:"width .5s ease"}}/>
+    </div>
+  );
+}
+
+// ── Choice Tile ────────────────────────────────────────────────────────────────
+function ChoiceTile({label,emoji,selected,onClick}){
+  return(
+    <button onClick={onClick} style={{
+      background:selected?`${C.terra}22`:C.night,
+      border:`1px solid ${selected?C.terra:C.nightBorder}`,
+      borderRadius:12,padding:"14px 12px",cursor:"pointer",textAlign:"center",
+      transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",gap:6,
+      fontFamily:"Montserrat,sans-serif",
+    }}>
+      <span style={{fontSize:22}}>{emoji}</span>
+      <span style={{fontSize:11,fontWeight:600,color:selected?C.terra:C.stone,lineHeight:1.3}}>{label}</span>
+    </button>
+  );
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default function ReturnReadingPlan(){
   const [s,setS]=useState(()=>loadState()||freshState());
@@ -621,26 +646,6 @@ export default function ReturnReadingPlan(){
     const words=["I","am","someone","who","returns","to","God's","Word."];
 
     // Progress bar component
-    const ProgressBar=({current,total})=>(
-      <div style={{width:"100%",height:3,background:C.nightBorder,borderRadius:2,marginBottom:28,overflow:"hidden"}}>
-        <div style={{height:"100%",background:`linear-gradient(90deg,${C.terra},${C.gold})`,borderRadius:2,width:`${(current/total)*100}%`,transition:"width .5s ease"}}/>
-      </div>
-    );
-
-    // Choice tile component
-    const ChoiceTile=({label,emoji,selected,onClick})=>(
-      <button onClick={onClick} style={{
-        background:selected?`${C.terra}22`:C.night,
-        border:`1px solid ${selected?C.terra:C.nightBorder}`,
-        borderRadius:12,padding:"14px 12px",cursor:"pointer",textAlign:"center",
-        transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",gap:6,
-        fontFamily:"Montserrat,sans-serif",
-      }}>
-        <span style={{fontSize:22}}>{emoji}</span>
-        <span style={{fontSize:11,fontWeight:600,color:selected?C.terra:C.stone,lineHeight:1.3}}>{label}</span>
-      </button>
-    );
-
     // ── STEP 0 — Identity (dramatic full-screen) ──────────────────────────────
     if(step===0){
       return(
