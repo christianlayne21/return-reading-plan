@@ -53,14 +53,94 @@ const PHASE_WHY = {
   1:{title:"Why we start with one verse",body:"Every plan you've tried before started too high. Four chapters a day. Three chapters. Even one chapter felt like a mountain after years away. And when you missed a day, the debt piled up until quitting felt easier than catching up.\n\nSo this plan starts differently. One verse. That's it.\n\nNot because I think you're weak. Because I know what it's like to sit down after years away and have your mind wander before you've finished the first paragraph. Your brain isn't broken — it's just been away. And you don't rebuild by starting at the top. You rebuild by proving to yourself that showing up is possible.\n\nOne verse. Read it. Sit in it. That counts."},
   2:{title:"You showed up three times.",body:"That's not nothing — that's the hardest part.\n\nNow we go a little further. Two or three verses. Still short. Still easy. That's intentional.\n\nYour brain is building something right now — a connection between sitting down and opening your Bible. The more times you show up before it gets hard, the stronger that connection gets. So we keep the bar low a little longer. Trust the process."},
   3:{title:"Seven readings. Seven times you showed up.",body:"Something has shifted — even if you can't feel it yet. You've proven to yourself that showing up is possible. Now the plan goes deeper.\n\nThese next readings are the ones I wish someone had shown me when I was trying to come back. They're not random passages. Every single one is a story of someone who failed, drifted, or ran — and what God did next. Read them like evidence. Because that's exactly what they are."},
-  4:{title:"You're past the halfway point.",body:"The passages from here shift focus. You've been reading about what God does with people who fail. Now you're going to read about who God says you are — not who shame says you are.\n\nThis is where the plan stops being about getting back to reading and starts being about who you become because you did."},
-  5:{title:"You're almost there.",body:"These last readings are full chapters. Not because the bar had to go up — because you're ready. You've shown up enough times that this is who you are now.\n\nRead these slowly. You've earned the depth."},
+  4:{title:"You've made it past the halfway point.",body:"I want to say something to you that I wish someone had said to me.\n\nYou might not feel any closer to God yet. The reading is happening, but the warmth, the sense of His presence, the closeness you remember — it might still feel far off. I want you to know that's completely normal. And it's not evidence that something is wrong.\n\nHere's what I've learned: feelings don't lead actions. Actions lead feelings. The closeness doesn't come first and then you start showing up. You show up first — even when it feels like nothing is happening — and eventually the feelings catch up.\n\nKeep returning to Scripture. Keep praying. Keep applying what you're reading. The feelings will follow. And one day soon you'll notice you've finally returned to the Lord."},
+  5:{title:"You've earned this.",body:"These last readings are full chapters. Not because the bar had to go up — because you've earned the right to be here.\n\nYou've shown up consistently enough that sitting with a full chapter isn't overwhelming anymore. The habit is real now. And if you're honest, you probably want more than a few verses anyway.\n\nRead these slowly. Take your time. You've built the capacity for this. And the chapters ahead are worth it."},
 };
 
-const QUIZ = [
-  {q:"What does the Return Reading Plan track instead of a streak?",options:["Chapters read","Days in a row","Returns","Minutes spent"],correct:2},
-  {q:"What is the only rule when you miss a reading?",options:["Start over from Reading 1","Never miss twice","Read double the next time","Skip it and move on"],correct:1},
-  {q:"Why does this plan start with just one verse?",options:["Because the Bible is hard to understand","To prove that showing up is possible before the bar rises","Because shorter is always better","To save time"],correct:1},
+const WHY_THIS_PASSAGE = {
+  1:"Because the first thing your brain needs to hear after years away is not a command — it's a verdict. No condemnation. Now. As you are.",
+  2:"Because shame tells you to stay away until you're ready. This verse says come with confidence. Those two things can't both be true. One of them is lying.",
+  3:"Because your avatar is someone who is brokenhearted about the distance between where he is and where he wants to be with God. This is where God says he is near.",
+  4:"Because the timing matters. Not after you cleaned yourself up. Not after you got consistent. While you were still a sinner. That's when God moved.",
+  5:"Because the most dangerous lie in the drift is that God's patience has limits. This verse answers that lie with specific, concrete language. New every morning. Not every perfect week.",
+  6:"Because guilt is supposed to lead somewhere — to the relief of forgiveness. This verse is what that relief actually feels like when it lands.",
+  7:"Because confession is the action that breaks the silence between you and God. One verse. One action. That's all this reading asks.",
+  8:"Because the father ran. Before the speech was finished. Before the son had proven anything. The father saw him from far off and ran. That's the posture of God toward you right now.",
+  9:"Because Peter failed publicly, specifically, and repeatedly — and Jesus didn't bring it up to shame him. He asked a question. Then gave him an assignment. That's restoration.",
+  10:"Because David wrote this after the worst thing he ever did. Not before he repented. In the middle of it. This is what honest prayer looks like from inside failure.",
+  11:"Because the most important words in this passage are 'a second time.' God came back. That's exactly what you're doing right now.",
+  12:"Because Paul called himself the chief of sinners — not as self-deprecation, but as proof. If mercy reached him, the argument for why it can't reach you collapses.",
+  13:"Because God's response to his people's drift wasn't punishment first. It was wilderness — and in the wilderness he spoke tenderly. That's this moment in your life.",
+  14:"Because you need to hear what God doesn't do. He doesn't deal with you according to your sins. He doesn't repay you according to your iniquities. As far as east is from west.",
+  15:"Because Peter's story doesn't end at the denial. It ends at the shore. Jesus made breakfast. That's the God you're returning to.",
+  16:"Because this is an invitation, not a command. Come. Everyone who thirsts. Come to the waters. The language is for someone who has been away and is being called back.",
+  17:"Because this verse describes God's posture toward you in the present tense. He rejoices over you. He quiets you with his love. He exults over you with loud singing. Right now.",
+  18:"Because repentance isn't a feeling — it's a direction. Rend your hearts, not your garments. God isn't looking for performance. He's looking for honesty.",
+  19:"Because the church at Ephesus did everything right and still lost the one thing that mattered — their first love. The call back is the same call you're answering right now.",
+  20:"Because God named you before you drifted. I have called you by name. You are mine. Past tense. That hasn't changed.",
+  21:"Because the promise is directional. Draw near and he will draw near. The movement starts with you. But the response is guaranteed.",
+  22:"Because after everything — after the drift, the shame, the failed attempts, the silence — nothing has separated you from the love of God. Paul makes the case completely. Read the whole thing.",
+  23:"Because before you were backslidden you were chosen, adopted, redeemed, and sealed. The drift didn't change any of those. This chapter names everything you still are.",
+  24:"Because you read verse 1 on Reading 1. No condemnation. Now you read the whole chapter. See what's between verse 1 and verse 39. That's the arc of the entire plan.",
+  25:"Because you've been putting on the old self for years. This passage describes what putting on the new self actually looks like in practice. Specific. Actionable. Grace-based.",
+  26:"Because you are surrounded by a cloud of witnesses — everyone who failed and came back and kept running. You are not the first. You are not alone. Run with endurance.",
+  27:"Because Paul lost everything he built his identity around and called it garbage compared to knowing Christ. Forgetting what lies behind. Straining forward. This is the posture of return.",
+  28:"Because one thing David asked — to dwell in the house of the Lord. Not to perform. Not to achieve. Just to be in God's presence. That's the desire underneath everything you've been building toward.",
+  29:"Because abide is the word for what you've been building. Not perform. Not achieve. Not maintain a streak. Abide. Remain. Stay. That's it.",
+  30:"Because the last reading is an invitation. He's been standing at the door the entire time. The whole plan has been walking you back to this moment.",
+};
+
+// Maintenance Mode — curated daily verses for post-plan consistency
+const MAINTENANCE_VERSES = [
+  {ref:"Psalm 1:2",    verse:"His delight is in the law of the Lord, and on his law he meditates day and night."},
+  {ref:"Joshua 1:8",  verse:"This Book of the Law shall not depart from your mouth, but you shall meditate on it day and night."},
+  {ref:"Romans 12:2", verse:"Do not be conformed to this world, but be transformed by the renewal of your mind."},
+  {ref:"Colossians 3:16", verse:"Let the word of Christ dwell in you richly, teaching and admonishing one another in all wisdom."},
+  {ref:"Psalm 119:11", verse:"I have stored up your word in my heart, that I might not sin against you."},
+  {ref:"Isaiah 40:8",  verse:"The grass withers, the flower fades, but the word of our God will stand forever."},
+  {ref:"2 Timothy 3:16", verse:"All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness."},
+  {ref:"Hebrews 4:12", verse:"For the word of God is living and active, sharper than any two-edged sword."},
+  {ref:"Matthew 4:4",  verse:"Man shall not live by bread alone, but by every word that comes from the mouth of God."},
+  {ref:"Psalm 119:105",verse:"Your word is a lamp to my feet and a light to my path."},
+  {ref:"John 8:31–32", verse:"If you abide in my word, you are truly my disciples, and you will know the truth, and the truth will set you free."},
+  {ref:"Romans 15:4",  verse:"For whatever was written in former days was written for our instruction, that through endurance and through the encouragement of the Scriptures we might have hope."},
+  {ref:"Deuteronomy 6:6", verse:"These words that I command you today shall be on your heart."},
+  {ref:"Psalm 19:7",   verse:"The law of the Lord is perfect, reviving the soul; the testimony of the Lord is sure, making wise the simple."},
+  {ref:"James 1:22",   verse:"But be doers of the word, and not hearers only, deceiving yourselves."},
+  {ref:"1 Peter 2:2",  verse:"Like newborn infants, long for the pure spiritual milk, that by it you may grow up into salvation."},
+  {ref:"Psalm 119:18", verse:"Open my eyes, that I may behold wondrous things out of your law."},
+  {ref:"Proverbs 30:5",verse:"Every word of God proves true; he is a shield to those who take refuge in him."},
+  {ref:"Luke 11:28",   verse:"Blessed are those who hear the word of God and keep it."},
+  {ref:"Acts 17:11",   verse:"They received the word with all eagerness, examining the Scriptures daily to see if these things were so."},
+  {ref:"Psalm 119:97", verse:"Oh how I love your law! It is my meditation all the day."},
+  {ref:"John 15:7",    verse:"If you abide in me, and my words abide in you, ask whatever you wish, and it will be done for you."},
+  {ref:"Romans 10:17", verse:"Faith comes from hearing, and hearing through the word of Christ."},
+  {ref:"Psalm 119:130",verse:"The unfolding of your words gives light; it imparts understanding to the simple."},
+  {ref:"Isaiah 55:11", verse:"So shall my word be that goes out from my mouth; it shall not return to me empty."},
+  {ref:"Matthew 24:35",verse:"Heaven and earth will pass away, but my words will not pass away."},
+  {ref:"Psalm 33:4",   verse:"For the word of the Lord is upright, and all his work is done in faithfulness."},
+  {ref:"Ephesians 6:17",verse:"Take the helmet of salvation, and the sword of the Spirit, which is the word of God."},
+  {ref:"Psalm 119:162",verse:"I rejoice at your word like one who finds great spoil."},
+  {ref:"John 17:17",   verse:"Sanctify them in the truth; your word is truth."},
+];
+
+// Expectation alignment — not graded, auto-advances after revealing answer
+const EXPECTATIONS = [
+  {
+    q:"What does this plan track instead of streaks?",
+    reveal:"Returns. Every time you open your Bible — including after missing days — your return count goes up. It never goes backward. A missed day doesn't erase anything.",
+    emoji:"↩"
+  },
+  {
+    q:"What's the only rule when you miss a reading?",
+    reveal:"Never miss twice. Missing once is human. The plan is built for it. The only failure is letting one missed day become two — and even then, the plan still doesn't expire.",
+    emoji:"📖"
+  },
+  {
+    q:"What if you don't feel anything when you read?",
+    reveal:"That's normal — especially early on. Feelings follow actions, not the other way around. The win isn't feeling something. The win is showing up. That's the whole metric.",
+    emoji:"🤍"
+  },
 ];
 
 const BADGES = [
@@ -74,7 +154,7 @@ const BADGES = [
   {id:"the_return",      label:"The Return",      emoji:"✝"},
 ];
 
-const STORAGE_KEY = "rrp_v5";
+const STORAGE_KEY = "rrp_v7";
 function loadState(){try{const r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):null;}catch{return null;}}
 function saveState(s){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(s));}catch{}}
 function freshState(){
@@ -90,6 +170,9 @@ function freshState(){
     returnCount:0,comebackCount:0,currentRun:0,bestRun:0,totalMinutes:0,badges:[],
     lastCompletedId:null,missedBeforeLast:false,
     showJournal:false,showComeback:false,
+    lastReadingTimestamp:null,longAbsenceShown:false,
+    reading5CheckinDone:false,vision30:"",
+    maintenanceDay:0,maintenanceMode:false,reading11Done:false,
   };
 }
 
@@ -325,12 +408,24 @@ export default function ReturnReadingPlan(){
   const [viewingId,setViewingId]=useState(null);
   const [showComeback,setShowComeback]=useState(false);
   const [pendingComebackData,setPendingComebackData]=useState(null);
+  const [showReading5Checkin,setShowReading5Checkin]=useState(false);
+  const [showReading11,setShowReading11]=useState(false);
+  const [expRevealed,setExpRevealed]=useState(false);
+  const [longAbsenceDetected,setLongAbsenceDetected]=useState(false);
   // Onboarding animation hooks — must be at top level
   const [wordIndex,setWordIndex]=useState(0);
   const [wordRevealed,setWordRevealed]=useState(false);
   const [rulePhase,setRulePhase]=useState(0);
 
   useEffect(()=>{saveState(s);},[s]);
+
+  // Long absence detection
+  useEffect(()=>{
+    if(s.screen!=="plan"&&s.screen!=="reading")return;
+    if(!s.lastReadingTimestamp||s.longAbsenceShown)return;
+    const daysSince=(Date.now()-s.lastReadingTimestamp)/(1000*60*60*24);
+    if(daysSince>=7){setLongAbsenceDetected(true);upd({longAbsenceShown:true});}
+  },[s.screen]);
 
   // Onboarding animation effects
   useEffect(()=>{
@@ -399,18 +494,62 @@ export default function ReturnReadingPlan(){
 
     let next="celebration";
     if(wasMissed){next="comeback";}
-    else if(id===7&&!s.accountabilityName)next="accountability";
+    else if(id===22&&!s.accountabilityName)next="accountability";
     else if(id===15)next="midpoint";
     else if(id===30)next="complete";
 
     if(wasMissed){
-      setPendingComebackData({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:true,currentRun:newRuns.current,bestRun:Math.max(s.bestRun||0,newRuns.best)});
+      setPendingComebackData({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:true,currentRun:newRuns.current,bestRun:Math.max(s.bestRun||0,newRuns.best),lastReadingTimestamp:Date.now()});
     } else {
-      upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:false,currentRun:newRuns.current,bestRun:Math.max(s.bestRun||0,newRuns.best),screen:next});
+      upd({completedReadings:newCompleted,returnCount:newReturn,comebackCount:newComeback,notes:newNotes,badges:earned,lastCompletedId:id,missedBeforeLast:false,currentRun:newRuns.current,bestRun:Math.max(s.bestRun||0,newRuns.best),lastReadingTimestamp:Date.now(),screen:next});
       if(isMilestone)setTimeout(()=>boom(),100);
     }
     setNoteVal("");setTimerDone(false);setTimerStarted(false);setViewingId(null);
+    // Reading 5 check-in
+    if(id===5){setTimeout(()=>setShowReading5Checkin(true),100);}
+    // Reading 11 micro-encouragement
+    if(id===11&&!s.reading11Done){upd({reading11Done:true});setTimeout(()=>setShowReading11(true),100);}
   };
+
+  // ── READING 11 MICRO-ENCOURAGEMENT ──────────────────────────────────────────
+  if(showReading11)return(
+    <div className="wrap"><style>{css}</style>
+      <div className="card anim" style={{textAlign:"center",borderColor:C.terra}}>
+        <div style={{fontSize:48,marginBottom:16}}>📖</div>
+        <p className="eyebrow" style={{marginBottom:8}}>Reading 11</p>
+        <h2 className="h2">You're in the middle.</h2>
+        <div className="gold-line"/>
+        <p className="body" style={{marginBottom:8}}>The novelty has worn off. The finish line isn't close enough to feel yet. This is the exact moment most people quietly stop.</p>
+        <p className="body" style={{marginBottom:8}}>You haven't stopped.</p>
+        <p className="body" style={{marginBottom:24,fontWeight:600,color:C.linen}}>The middle is where the habit actually forms. What you're doing right now — showing up when it doesn't feel exciting — is the most important part of the entire plan.</p>
+        <button className="btn" onClick={()=>setShowReading11(false)}>Keep going →</button>
+        <Footer/>
+      </div>
+    </div>
+  );
+
+  // ── READING 5 CHECK-IN ───────────────────────────────────────────────────────
+  if(showReading5Checkin&&!s.reading5CheckinDone)return(
+    <div className="wrap"><style>{css}</style>
+      <div className="card anim">
+        <p className="eyebrow">Reading 5 Complete</p>
+        <h2 className="h2">Quick check-in</h2>
+        <div className="gold-line"/>
+        <p className="body" style={{marginBottom:20}}>You've completed five readings. I genuinely want to know — how is it going so far? Be as honest as you want. I read these personally.</p>
+        <SimpleForm
+          textLabel="How are you feeling about the plan so far?"
+          textPlaceholder="Be honest — what's working, what's hard, how you're feeling..."
+          submitLabel="Send →"
+          formType="Reading 5 Check-In"
+          extraData={{email:s.email,completedReadings:5}}
+          savedName={s.firstName}
+          onSuccess={()=>{upd({reading5CheckinDone:true});setShowReading5Checkin(false);}}
+        />
+        <button className="btn-g" style={{marginTop:10}} onClick={()=>{upd({reading5CheckinDone:true});setShowReading5Checkin(false);}}>Skip</button>
+        <Footer/>
+      </div>
+    </div>
+  );
 
   // ── COMEBACK SCREEN ──────────────────────────────────────────────────────────
   if(s.screen==="comeback"||pendingComebackData){
@@ -423,7 +562,7 @@ export default function ReturnReadingPlan(){
           // Now determine next screen after comeback
           const id=pendingComebackData.lastCompletedId;
           let next="plan";
-          if(id===7&&!s.accountabilityName)next="accountability";
+          if(id===22&&!s.accountabilityName)next="accountability";
           else if(id===15)next="midpoint";
           else if(id===30)next="complete";
           upd({...pendingComebackData,screen:next});
@@ -433,6 +572,29 @@ export default function ReturnReadingPlan(){
       />
     );
   }
+
+  // ── LONG ABSENCE ─────────────────────────────────────────────────────────────
+  if(longAbsenceDetected)return(
+    <div className="wrap"><style>{css}</style>
+      <div className="card anim" style={{textAlign:"center",borderColor:C.terra}}>
+        <div style={{fontSize:52,marginBottom:16}}>📖</div>
+        <h2 className="h2">You've been away for a while.</h2>
+        <div className="gold-line"/>
+        <p className="body" style={{marginBottom:8}}>That's okay. This plan doesn't expire. It's been here the whole time, exactly where you left it.</p>
+        <p className="body" style={{marginBottom:8}}>You don't have to explain where you've been. You don't have to catch up. You don't have to feel ready.</p>
+        <p className="body" style={{marginBottom:24,fontWeight:600,color:C.linen}}>Just open it. That's the whole move.</p>
+        <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:12,padding:"16px",marginBottom:24}}>
+          <p style={{fontSize:11,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Your comeback protocol</p>
+          <p className="body" style={{textAlign:"left",marginBottom:6}}>1. Open your Bible to today's reading.</p>
+          <p className="body" style={{textAlign:"left",marginBottom:6}}>2. Don't think about the days you missed.</p>
+          <p className="body" style={{textAlign:"left",marginBottom:6}}>3. Don't try to catch up.</p>
+          <p className="body" style={{textAlign:"left"}}>4. Read today's passage and write one thing you noticed.</p>
+        </div>
+        <button className="btn" onClick={()=>setLongAbsenceDetected(false)}>I'm back. Let's go →</button>
+        <Footer/>
+      </div>
+    </div>
+  );
 
   // ── WELCOME ──────────────────────────────────────────────────────────────────
   if(s.screen==="welcome")return(
@@ -515,122 +677,89 @@ export default function ReturnReadingPlan(){
       );
     }
 
-    // ── STEP 1 — Anchor (visual choices) ─────────────────────────────────────
+    // ── STEP 1 — Build Your Ritual (anchor + location + pairing combined) ─────
     if(step===1){
       const ANCHORS=[
         {label:"Morning coffee",emoji:"☕"},{label:"Brushing teeth",emoji:"🪥"},
         {label:"Getting into bed",emoji:"🛌"},{label:"After lunch",emoji:"🍽"},
         {label:"After work",emoji:"💼"},{label:"Something else",emoji:"✏️"},
       ];
-      const customAnchor=!ANCHORS.slice(0,-1).some(a=>a.label===s.anchor)&&s.anchor.trim();
-      return(
-        <div className="wrap"><style>{css}</style>
-          <div className="card anim">
-            <ProgressBar current={2} total={TOTAL_STEPS}/>
-            <button className="btn-back" onClick={()=>upd({onboardingStep:0})}>← Back</button>
-            <p className="eyebrow">Step 2 of 6 — Anchor</p>
-            <h2 className="h2">When will you read?</h2>
-            <p className="body" style={{marginBottom:6}}>Don't pick a time. Pick a trigger — something you already do every day without thinking.</p>
-            <p className="body" style={{marginBottom:20,color:C.stone}}>When your trigger happens, reading happens with it.</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
-              {ANCHORS.map(a=>(
-                <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
-                  selected={s.anchor===a.label||(a.label==="Something else"&&customAnchor)}
-                  onClick={()=>{
-                    if(a.label==="Something else"){upd({anchor:""});}
-                    else upd({anchor:a.label});
-                  }}/>
-              ))}
-            </div>
-            {(s.anchor===""||customAnchor||!ANCHORS.slice(0,-1).some(a=>a.label===s.anchor))&&(
-              <textarea className="inp" rows={2} placeholder="Describe your trigger..." value={s.anchor} onChange={e=>upd({anchor:e.target.value})} style={{marginBottom:4}}/>
-            )}
-            <div style={{marginTop:16}}><button className="btn" disabled={!s.anchor.trim()} onClick={()=>upd({onboardingStep:2})}>Continue</button></div>
-            <Footer/>
-          </div>
-        </div>
-      );
-    }
-
-    // ── STEP 2 — Location (visual choices) ───────────────────────────────────
-    if(step===2){
       const LOCATIONS=[
         {label:"On my nightstand",emoji:"🌙"},{label:"Kitchen counter",emoji:"🍳"},
         {label:"My desk",emoji:"🖥"},{label:"Living room couch",emoji:"🛋"},
         {label:"Bathroom counter",emoji:"🚿"},{label:"Somewhere else",emoji:"✏️"},
       ];
-      const customLoc=!LOCATIONS.slice(0,-1).some(a=>a.label===s.location)&&s.location.trim();
+      const PAIRINGS=[
+        {label:"Coffee",emoji:"☕"},{label:"Tea",emoji:"🫖"},
+        {label:"A candle",emoji:"🕯"},{label:"My specific chair",emoji:"🪑"},
+        {label:"Silence",emoji:"🤫"},{label:"Something else",emoji:"✏️"},
+      ];
+      const canContinue=s.anchor.trim()&&s.location.trim();
       return(
         <div className="wrap"><style>{css}</style>
           <div className="card anim">
-            <ProgressBar current={3} total={TOTAL_STEPS}/>
-            <button className="btn-back" onClick={()=>upd({onboardingStep:1})}>← Back</button>
-            <p className="eyebrow">Step 3 of 6 — Location</p>
-            <h2 className="h2">Where will your Bible live?</h2>
-            <p className="body" style={{marginBottom:6}}>The single biggest predictor of whether you read is whether your Bible is visible before your phone is.</p>
-            <p className="body" style={{marginBottom:20,color:C.stone}}>This decision gets made once — right now.</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+            <ProgressBar current={2} total={4}/>
+            <button className="btn-back" onClick={()=>{setWordIndex(0);setWordRevealed(false);upd({onboardingStep:0});}}>← Back</button>
+            <p className="eyebrow">Step 2 of 4 — Your Ritual</p>
+            <h2 className="h2">Build your reading ritual</h2>
+            <p className="body" style={{marginBottom:24,color:C.stone}}>Three quick decisions that make showing up automatic.</p>
+
+            <p style={{fontSize:12,fontWeight:700,color:C.linen,marginBottom:10}}>After what? <span style={{color:C.stone,fontWeight:400}}>Pick a trigger</span></p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
+              {ANCHORS.map(a=>(
+                <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
+                  selected={s.anchor===a.label||(a.label==="Something else"&&customAnchor)}
+                  onClick={()=>{if(a.label==="Something else")upd({anchor:""});else upd({anchor:a.label});}}/>
+              ))}
+            </div>
+            {(!ANCHORS.slice(0,-1).some(a=>a.label===s.anchor))&&(
+              <textarea className="inp" rows={1} placeholder="Describe your trigger..." value={s.anchor} onChange={e=>upd({anchor:e.target.value})} style={{marginBottom:4}}/>
+            )}
+
+            <div style={{height:1,background:C.nightBorder,margin:"18px 0"}}/>
+
+            <p style={{fontSize:12,fontWeight:700,color:C.linen,marginBottom:10}}>Where will your Bible live?</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
               {LOCATIONS.map(a=>(
                 <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
                   selected={s.location===a.label||(a.label==="Somewhere else"&&customLoc)}
                   onClick={()=>{if(a.label==="Somewhere else")upd({location:""});else upd({location:a.label});}}/>
               ))}
             </div>
-            {(s.location===""||customLoc||!LOCATIONS.slice(0,-1).some(a=>a.label===s.location))&&(
-              <textarea className="inp" rows={2} placeholder="Describe the location..." value={s.location} onChange={e=>upd({location:e.target.value})} style={{marginBottom:4}}/>
+            {(!LOCATIONS.slice(0,-1).some(a=>a.label===s.location))&&(
+              <textarea className="inp" rows={1} placeholder="Describe the location..." value={s.location} onChange={e=>upd({location:e.target.value})} style={{marginBottom:4}}/>
             )}
-            <div style={{marginTop:16}}><button className="btn" disabled={!s.location.trim()} onClick={()=>upd({onboardingStep:3})}>Continue</button></div>
-            <Footer/>
-          </div>
-        </div>
-      );
-    }
 
-    // ── STEP 3 — Pairing (visual choices) ────────────────────────────────────
-    if(step===3){
-      const PAIRINGS=[
-        {label:"Coffee",emoji:"☕"},{label:"Tea",emoji:"🫖"},
-        {label:"A candle",emoji:"🕯"},{label:"My specific chair",emoji:"🪑"},
-        {label:"Silence",emoji:"🤫"},{label:"Something else",emoji:"✏️"},
-      ];
-      const customPair=!PAIRINGS.slice(0,-1).some(a=>a.label===s.pairing)&&s.pairing.trim();
-      return(
-        <div className="wrap"><style>{css}</style>
-          <div className="card anim">
-            <ProgressBar current={4} total={TOTAL_STEPS}/>
-            <button className="btn-back" onClick={()=>upd({onboardingStep:2})}>← Back</button>
-            <p className="eyebrow">Step 4 of 6 — Pairing</p>
-            <h2 className="h2">What will you pair with reading?</h2>
-            <p className="body" style={{marginBottom:6}}>Pairing a habit with something you already enjoy creates an immediate reward. Over time your brain starts associating that experience with opening your Bible.</p>
-            <p className="body" style={{marginBottom:20,color:C.stone}}>Optional — but powerful.</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+            <div style={{height:1,background:C.nightBorder,margin:"18px 0"}}/>
+
+            <p style={{fontSize:12,fontWeight:700,color:C.linen,marginBottom:4}}>What will you pair it with? <span style={{color:C.stone,fontWeight:400}}>Optional</span></p>
+            <p className="muted" style={{marginBottom:10}}>Pairing creates an immediate reward before the spiritual payoff arrives.</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:8}}>
               {PAIRINGS.map(a=>(
                 <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
                   selected={s.pairing===a.label||(a.label==="Something else"&&customPair)}
                   onClick={()=>{if(a.label==="Something else")upd({pairing:""});else upd({pairing:a.label});}}/>
               ))}
             </div>
-            {(s.pairing===""||customPair||!PAIRINGS.slice(0,-1).some(a=>a.label===s.pairing))&&(
-              <textarea className="inp" rows={2} placeholder="Describe your pairing..." value={s.pairing} onChange={e=>upd({pairing:e.target.value})} style={{marginBottom:4}}/>
+            {(!PAIRINGS.slice(0,-1).some(a=>a.label===s.pairing))&&(
+              <textarea className="inp" rows={1} placeholder="Describe your pairing..." value={s.pairing} onChange={e=>upd({pairing:e.target.value})} style={{marginBottom:4}}/>
             )}
-            <div style={{marginTop:16,display:"flex",flexDirection:"column",gap:10}}>
-              <button className="btn" onClick={()=>upd({onboardingStep:4})}>Continue</button>
-              <button className="btn-g" onClick={()=>upd({onboardingStep:4})}>Skip</button>
-            </div>
+
+            <div style={{marginTop:20}}><button className="btn" disabled={!canContinue} onClick={()=>upd({onboardingStep:2})}>Continue</button></div>
             <Footer/>
           </div>
         </div>
       );
     }
 
-    // ── STEP 4 — The Rule (full-screen ceremony) ──────────────────────────────
+        // ── STEP 4 — The Rule (full-screen ceremony) ──────────────────────────────
     if(step===4){
       return(
         <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:C.night,padding:"24px 24px 48px"}}>
           <style>{css}</style>
           <div style={{width:"100%",maxWidth:600}}>
-            <ProgressBar current={5} total={TOTAL_STEPS}/>
-            <button className="btn-back" onClick={()=>upd({onboardingStep:3})}>← Back</button>
+            <ProgressBar current={3} total={4}/>
+            <button className="btn-back" onClick={()=>upd({onboardingStep:1})}>← Back</button>
             <div style={{textAlign:"center",marginBottom:48}}>
               <p style={{opacity:rulePhase>=1?1:0,transform:rulePhase>=1?"none":"translateY(10px)",transition:"all .6s ease",fontSize:10,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase",color:C.terra,marginBottom:32}}>The Only Rule</p>
               <p style={{opacity:rulePhase>=2?1:0,transform:rulePhase>=2?"none":"translateY(10px)",transition:"all .7s ease .2s",fontSize:11,color:C.stone,marginBottom:24,lineHeight:1.7}}>This plan is built for missing days.<br/>Missing is expected. The only failure<br/>is letting one missed day become two.</p>
@@ -655,9 +784,9 @@ export default function ReturnReadingPlan(){
     if(step===5)return(
       <div className="wrap"><style>{css}</style>
         <div className="card anim">
-          <ProgressBar current={6} total={TOTAL_STEPS}/>
-          <button className="btn-back" onClick={()=>upd({onboardingStep:4})}>← Back</button>
-          <p className="eyebrow">Step 6 of 6 — Why One Verse</p>
+          <ProgressBar current={4} total={4}/>
+          <button className="btn-back" onClick={()=>{setRulePhase(0);upd({onboardingStep:2});}}>← Back</button>
+          <p className="eyebrow">Step 4 of 4 — Why One Verse</p>
           <h2 className="h2">{PHASE_WHY[1].title}</h2>
           {PHASE_WHY[1].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:12}}>{p}</p>)}
           <div style={{marginTop:8}}><button className="btn" onClick={()=>upd({screen:"quiz"})}>I'm ready →</button></div>
@@ -667,27 +796,31 @@ export default function ReturnReadingPlan(){
     );
   }
 
-    // ── QUIZ ─────────────────────────────────────────────────────────────────────
+    // ── EXPECTATION ALIGNMENT ────────────────────────────────────────────────────
   if(s.screen==="quiz"){
-    const q=QUIZ[quizQ];
+    const exp=EXPECTATIONS[quizQ];
     return(
       <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({screen:"onboarding",onboardingStep:5})}>← Back</button>
-        <p className="eyebrow">Quick Check — {quizQ+1} of {QUIZ.length}</p>
-        <h2 className="h2" style={{marginBottom:20}}>{q.q}</h2>
-        {q.options.map((opt,i)=>(
-          <button key={i} className={`qopt${quizAns===i?(i===q.correct?" ok":" no"):""}${quizWrong.includes(i)?" no":""}`}
-            disabled={quizCooldown&&quizAns===null}
-            onClick={()=>{
-              if(quizAns!==null||quizCooldown)return;
-              setQuizAns(i);
-              if(i===q.correct){setTimeout(()=>{if(quizQ<QUIZ.length-1){setQuizQ(quizQ+1);setQuizAns(null);setQuizWrong([]);}else upd({screen:"day1prompt"});},700);}
-              else{setQuizWrong(p=>[...p,i]);setQuizCooldown(true);setTimeout(()=>{setQuizAns(null);setQuizCooldown(false);},3000);}
-            }}>{opt}
-          </button>
-        ))}
-        {quizAns!==null&&quizAns===QUIZ[quizQ].correct&&<p style={{color:C.green,fontSize:12,fontWeight:600,marginTop:6,textAlign:"center"}}>Correct ✓</p>}
-        {quizCooldown&&<p style={{color:C.red,fontSize:11,marginTop:6,textAlign:"center"}}>Not quite — try again in a moment.</p>}
+        <button className="btn-back" onClick={()=>{setExpRevealed(false);upd({screen:"onboarding",onboardingStep:3});}}>← Back</button>
+        <p className="eyebrow">Before You Begin — {quizQ+1} of {EXPECTATIONS.length}</p>
+        <div style={{fontSize:36,textAlign:"center",marginBottom:16}}>{exp.emoji}</div>
+        <h2 className="h2" style={{textAlign:"center",marginBottom:24}}>{exp.q}</h2>
+        {!expRevealed?(
+          <button className="btn" onClick={()=>setExpRevealed(true)}>See the answer</button>
+        ):(
+          <>
+            <div style={{background:C.goldDim,border:`1px solid ${C.gold}44`,borderRadius:12,padding:"16px 18px",marginBottom:20}}>
+              <p className="body" style={{color:C.linen,lineHeight:1.8}}>{exp.reveal}</p>
+            </div>
+            <button className="btn" onClick={()=>{
+              setExpRevealed(false);
+              if(quizQ<EXPECTATIONS.length-1){setQuizQ(quizQ+1);}
+              else upd({screen:"day1prompt"});
+            }}>
+              {quizQ<EXPECTATIONS.length-1?"Got it — next →":"Got it — let's begin →"}
+            </button>
+          </>
+        )}
         <Footer/>
       </div></div>
     );
@@ -701,6 +834,8 @@ export default function ReturnReadingPlan(){
       <h2 className="h2">What makes today your day one?</h2>
       <p className="body" style={{marginBottom:20}}>I'll show this back to you on Reading 30. It doesn't have to be profound — just honest.</p>
       <textarea className="inp" rows={4} placeholder="Why today? What do you want to be different by Reading 30?" value={s.day1Why} onChange={e=>upd({day1Why:e.target.value})}/>
+      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"14px 0 6px"}}>What do you want your relationship with God to look like 30 days from now?</p>
+      <textarea className="inp" rows={3} placeholder="Be specific — what would feel different? What would be true that isn't true today?" value={s.vision30||""} onChange={e=>upd({vision30:e.target.value})}/>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"16px 0 6px"}}>Your first name</p>
       <input className="inp" placeholder="First name..." value={s.firstName} onChange={e=>upd({firstName:e.target.value})}/>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
@@ -740,9 +875,16 @@ export default function ReturnReadingPlan(){
     <div className="wrap"><style>{css}</style>
       <Confetti active={confetti}/>
       <div className="card anim">
-        <p className="eyebrow">Reading 7 Complete ⭐</p>
-        <h2 className="h2">Seven times you showed up.</h2>
+        <p className="eyebrow">Reading 22 Complete 🛡</p>
+        <h2 className="h2">You've proven you can do this.</h2>
         <div className="gold-line"/>
+        {s.vision30&&(
+          <div style={{background:C.goldDim,border:`1px solid ${C.gold}44`,borderRadius:10,padding:"12px 14px",marginBottom:16}}>
+            <p style={{fontSize:10,fontWeight:600,color:C.gold,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>On day one, you said you wanted...</p>
+            <p className="body" style={{fontStyle:"italic",color:C.linen,fontSize:12}}>"{s.vision30}"</p>
+            <p className="muted" style={{marginTop:6}}>Seven readings in. You're building toward that.</p>
+          </div>
+        )}
         <p className="body" style={{marginBottom:8}}>Research shows that people who tell someone else about a commitment are significantly more likely to follow through than people who keep it to themselves.</p>
         <p className="body" style={{marginBottom:8}}>I know this might feel uncomfortable. If you've been away from God's Word for a while, the last thing you want to do is tell someone about it. You don't have to explain why you're starting. Just tell them this:</p>
         <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"14px 16px",marginBottom:20}}>
@@ -751,7 +893,7 @@ export default function ReturnReadingPlan(){
         <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>Who will you tell?</p>
         <input className="inp" placeholder="Their name..." value={s.accountabilityName} onChange={e=>upd({accountabilityName:e.target.value})}/>
         <div style={{marginTop:18,display:"flex",flexDirection:"column",gap:10}}>
-          <button className="btn" disabled={!s.accountabilityName.trim()} onClick={()=>upd({screen:"plan"})}>Continue to Reading 8</button>
+          <button className="btn" disabled={!s.accountabilityName.trim()} onClick={()=>upd({screen:"plan"})}>Continue to Reading 23</button>
           <button className="btn-g" onClick={()=>upd({screen:"plan"})}>Skip for now</button>
         </div>
         <Footer/>
@@ -848,6 +990,28 @@ export default function ReturnReadingPlan(){
             <p className="eyebrow" style={{color:PHASE_COLORS[reading.phase]}}>{PHASE_LABELS[reading.phase]} · Reading {reading.id} of 30{isReview?" — Review":""}</p>
             <h2 className="h2">{reading.ref}</h2>
             <div className="gold-line"/>
+            {/* What this plan is not — Reading 1 only */}
+            {reading.id===1&&!isReview&&(
+              <div style={{background:C.night,border:`1px solid ${C.terra}`,borderRadius:10,padding:"14px",marginBottom:14}}>
+                <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Before Reading 1 — a quick note</p>
+                <p className="body" style={{fontSize:12,marginBottom:6}}>This plan is not going to make you feel close to God immediately. The feeling comes back slowly, after consistent showing up.</p>
+                <p className="body" style={{fontSize:12}}>Don't measure success by how you feel after Reading 1. Measure it by whether you come back for Reading 2.</p>
+              </div>
+            )}
+            {/* Why this passage */}
+            {WHY_THIS_PASSAGE[reading.id]&&(
+              <div style={{background:C.goldDim,border:`1px solid ${C.gold}44`,borderRadius:10,padding:"12px 14px",marginBottom:14}}>
+                <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:C.gold,marginBottom:6}}>Why this reading</p>
+                <p className="body" style={{fontSize:12,color:C.parchment}}>{WHY_THIS_PASSAGE[reading.id]}</p>
+              </div>
+            )}
+            {/* Prayer prompt */}
+            {!isReview&&(
+              <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"14px",marginBottom:14}}>
+                <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:C.stone,marginBottom:6}}>Before you read</p>
+                <p className="body" style={{fontSize:12}}>Take 30 seconds to say one honest sentence to God about where you are right now. Not a polished prayer. Just honest.</p>
+              </div>
+            )}
             <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"16px 14px",marginBottom:16}}>
               <p className="body" style={{fontStyle:"italic",color:C.linen,lineHeight:1.8}}>{reading.verse}</p>
               {reading.phase>1&&<p className="muted" style={{marginTop:10,borderTop:`1px solid ${C.nightBorder}`,paddingTop:8}}>📖 Use a physical Bible if possible — it removes the phone from the equation entirely.</p>}
@@ -862,6 +1026,13 @@ export default function ReturnReadingPlan(){
               <p className="muted" style={{marginBottom:14}}>A word, a phrase, a question — whatever landed. Write at least a sentence.</p>
               <textarea className="inp" rows={3} placeholder="A word, a phrase, a question — whatever landed..." value={noteVal} onChange={e=>setNoteVal(e.target.value)}/>
               {noteVal.length>0&&!noteValid&&<p className="muted" style={{marginTop:6}}>Keep going — just a little more.</p>}
+              {/* What to do if you feel nothing — shown at readings 3, 8, 16 and randomly 30% other times */}
+              {(reading.id===3||reading.id===8||reading.id===16||(reading.id%3===0&&reading.id>3))&&(
+                <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"12px 14px",marginTop:12}}>
+                  <p style={{fontSize:10,fontWeight:600,color:C.stone,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:6}}>If you felt nothing today</p>
+                  <p className="body" style={{fontSize:12}}>That's okay. That's normal at this stage. The return isn't measured by what you felt. It's measured by the fact that you opened it. That's the whole win today.</p>
+                </div>
+              )}
               <div style={{marginTop:14}}>
                 <button className="btn" disabled={!noteValid||(timerStarted&&!timerDone)} onClick={()=>completeReading(reading.id,noteVal)}>
                   {timerStarted&&!timerDone?"Finish the timer first":!noteValid?"Write a bit more first":"Mark as complete ↑"}
@@ -875,6 +1046,37 @@ export default function ReturnReadingPlan(){
               <p className="body" style={{fontStyle:"italic",color:C.linen}}>"{s.notes[reading.id]||"No note recorded."}"</p>
             </div>
           )}
+          <Footer/>
+        </div>
+      </div>
+    );
+  }
+
+  // ── MAINTENANCE MODE ─────────────────────────────────────────────────────────
+  if(s.screen==="maintenance"){
+    const verse=MAINTENANCE_VERSES[s.maintenanceDay%MAINTENANCE_VERSES.length];
+    return(
+      <div className="wrap"><style>{css}</style>
+        <div className="stack">
+          <div className="card anim" style={{textAlign:"center"}}>
+            <p className="eyebrow">Maintenance Mode — Day {s.maintenanceDay+1}</p>
+            <h2 className="h2" style={{marginBottom:4}}>{verse.ref}</h2>
+            <div className="gold-line"/>
+            <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"20px 18px",marginBottom:20}}>
+              <p className="body" style={{fontStyle:"italic",color:C.linen,fontSize:15,lineHeight:1.9}}>"{verse.verse}"</p>
+            </div>
+            <p className="muted" style={{marginBottom:20}}>One verse a day. The anchor habit stays alive.</p>
+            <button className="btn" onClick={()=>{upd({maintenanceDay:s.maintenanceDay+1,returnCount:s.returnCount+1});setCountAnim(true);setTimeout(()=>setCountAnim(false),600);}}>
+              Mark as read ↑
+            </button>
+          </div>
+          <div className="card anim" style={{padding:"16px 20px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:16}}>
+              <div className={countAnim?"pop":""} style={{fontSize:36,fontWeight:800,color:C.gold}}>{s.returnCount}</div>
+              <div><p style={{fontWeight:700,color:C.linen,fontSize:13}}>Total Returns</p><p className="muted">This number never goes backward</p></div>
+            </div>
+          </div>
+          <button className="btn-g" onClick={()=>upd({screen:"plan"})}>← Back to plan</button>
           <Footer/>
         </div>
       </div>
@@ -964,6 +1166,14 @@ export default function ReturnReadingPlan(){
             </div>
           </div>
 
+          {/* Reading 7 soft acknowledgment */}
+          {s.completedReadings.includes(7)&&!s.completedReadings.includes(8)&&(
+            <div className="card anim" style={{borderColor:C.terra,padding:"16px 20px"}}>
+              <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Seven readings</p>
+              <p className="body" style={{fontSize:12}}>You've shown up seven times. That's not nothing — that's the hardest part of any return. Keep going. The plan gets deeper from here.</p>
+            </div>
+          )}
+
           {/* Phase message */}
           {showPhaseMsg&&PHASE_WHY[nextPhase]&&(
             <div className="card anim" style={{borderColor:C.terra}}>
@@ -1005,12 +1215,15 @@ export default function ReturnReadingPlan(){
             </div>
           )}
 
-          {/* Journal + share */}
+          {/* Journal + share + maintenance */}
           <div className="card anim" style={{padding:"16px 20px"}}>
-            <div style={{display:"flex",gap:10}}>
-              <button className="btn-g" style={{flex:1}} onClick={()=>upd({screen:"journal"})}>📖 Reading Journal ({Object.keys(s.notes).length})</button>
-              <button className="btn-g" style={{flex:1}} onClick={()=>navigator.clipboard?.writeText(shareText).then(()=>alert("Copied!"))}>Share Progress</button>
+            <div style={{display:"flex",gap:10,marginBottom:10}}>
+              <button className="btn-g" style={{flex:1}} onClick={()=>upd({screen:"journal"})}>📖 Journal ({Object.keys(s.notes).length})</button>
+              <button className="btn-g" style={{flex:1}} onClick={()=>navigator.clipboard?.writeText(shareText).then(()=>alert("Copied!"))}>Share</button>
             </div>
+            {isComplete&&(
+              <button className="btn-g" onClick={()=>upd({screen:"maintenance"})}>Enter Maintenance Mode →</button>
+            )}
           </div>
 
           {/* Setup reminder + edit */}
@@ -1025,7 +1238,8 @@ export default function ReturnReadingPlan(){
           </div>
 
           <div style={{textAlign:"center",padding:"10px 0",borderTop:`1px solid ${C.nightBorder}`}}>
-            <p style={{fontSize:11,fontWeight:700,color:C.stone}}>The only rule: never miss twice.</p>
+            <p style={{fontSize:11,fontWeight:700,color:C.stone,marginBottom:4}}>The only rule: never miss twice.</p>
+            <p style={{fontSize:10,color:C.nightBorder.replace("28","45"),color:C.stone,opacity:.6}}>The goal isn't the number. The goal is the relationship.</p>
           </div>
           <Footer/>
         </div>
@@ -1051,8 +1265,15 @@ export default function ReturnReadingPlan(){
 
         {s.day1Why&&(
           <div className="card anim" style={{borderColor:C.gold}}>
-            <p className="eyebrow" style={{color:C.gold,marginBottom:8}}>On Reading 1, you said...</p>
+            <p className="eyebrow" style={{color:C.gold,marginBottom:8}}>On Reading 1, you said your day one was...</p>
             <p className="body" style={{fontStyle:"italic",color:C.linen,marginBottom:12}}>"{s.day1Why}"</p>
+            {s.vision30&&(
+              <>
+                <hr style={{border:"none",borderTop:`1px solid ${C.nightBorder}`,margin:"12px 0"}}/>
+                <p className="eyebrow" style={{color:C.gold,marginBottom:6}}>And you wanted your relationship with God to look like...</p>
+                <p className="body" style={{fontStyle:"italic",color:C.linen,marginBottom:12}}>"{s.vision30}"</p>
+              </>
+            )}
             <hr style={{border:"none",borderTop:`1px solid ${C.nightBorder}`,margin:"12px 0"}}/>
             <p className="body">How does that feel now?</p>
           </div>
@@ -1070,19 +1291,22 @@ export default function ReturnReadingPlan(){
           <button className="btn-g" onClick={()=>navigator.clipboard?.writeText(`I just completed The Return Reading Plan — 30 readings back in God's Word. My return count was ${s.returnCount}. If you've been away from your Bible, this plan was built for you: return-reading-plan.vercel.app`).then(()=>alert("Copied!"))}>Copy to share</button>
         </div>
 
-        <button className="btn" onClick={()=>upd({screen:"plan"})}>Back to plan →</button>
-
-        {!s.confirmReset
-          ?<button className="btn-g" onClick={()=>upd({confirmReset:true})}>Start a new journey</button>
-          :<div className="card anim" style={{borderColor:C.red}}>
-            <p className="h3" style={{color:C.red,marginBottom:8}}>Are you sure?</p>
-            <p className="body" style={{marginBottom:16}}>This will reset all your progress, return count, and badges. This cannot be undone.</p>
-            <div style={{display:"flex",gap:10}}>
-              <button className="btn-g" style={{flex:1}} onClick={()=>upd({confirmReset:false})}>Cancel</button>
-              <button className="btn" style={{flex:1,background:C.red}} onClick={()=>{const f=freshState();saveState(f);setS(f);}}>Yes, reset</button>
-            </div>
+        {/* What next hand-off */}
+        <div className="card anim">
+          <p className="eyebrow" style={{marginBottom:8}}>What happens next?</p>
+          <p className="h3" style={{marginBottom:16}}>Choose your next step</p>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            <button className="btn" onClick={()=>upd({screen:"maintenance",maintenanceMode:true})}>
+              Maintenance Mode — one verse a day to keep the habit alive
+            </button>
+            <button className="btn-g" onClick={()=>{const f=freshState();saveState(f);setS(f);}}>
+              Start the Return Reading Plan again
+            </button>
+            <button className="btn-g" onClick={()=>upd({screen:"plan"})}>
+              Stay on the plan and review your readings
+            </button>
           </div>
-        }
+        </div>
         <Footer/>
       </div>
     </div>
