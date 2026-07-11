@@ -63,7 +63,7 @@ const PHASE_WHY = {
 const WHY_THIS_PASSAGE = {
   1:"Because the first thing your brain needs to hear after years away is not a command — it's a verdict. No condemnation. Now. As you are.",
   2:"Because shame tells you to stay away until you're ready. This verse says come with confidence. Those two things can't both be true. One of them is lying.",
-  3:"Because your avatar is someone who is brokenhearted about the distance between where he is and where he wants to be with God. This is where God says he is near.",
+  3:"Because you're brokenhearted about the distance between where you are and where you want to be with God. This is where God says he is near.",
   4:"Because the timing matters. Not after you cleaned yourself up. Not after you got consistent. While you were still a sinner. That's when God moved.",
   5:"Because the most dangerous lie in the drift is that God's patience has limits. This verse answers that lie with specific, concrete language. New every morning. Not every perfect week.",
   6:"Because guilt is supposed to lead somewhere — to the relief of forgiveness. This verse is what that relief actually feels like when it lands.",
@@ -76,14 +76,14 @@ const WHY_THIS_PASSAGE = {
   13:"Because God's response to his people's drift wasn't punishment first. It was wilderness — and in the wilderness he spoke tenderly. That's this moment in your life.",
   14:"Because you need to hear what God doesn't do. He doesn't deal with you according to your sins. He doesn't repay you according to your iniquities. As far as east is from west.",
   15:"Because Peter's story doesn't end at the denial. It ends at the shore. Jesus made breakfast. That's the God you're returning to.",
-  16:"Because this is an invitation, not a command. Come. Everyone who thirsts. Come to the waters. The language is for someone who has been away and is being called back.",
+  16:"Because this is an invitation, not a command. Come. Everyone who thirsts. Come to the waters. That language is written for you — for someone who has been away and is being called back.",
   17:"Because this verse describes God's posture toward you in the present tense. He rejoices over you. He quiets you with his love. He exults over you with loud singing. Right now.",
   18:"Because repentance isn't a feeling — it's a direction. Rend your hearts, not your garments. God isn't looking for performance. He's looking for honesty.",
   19:"Because the church at Ephesus did everything right and still lost the one thing that mattered — their first love. The call back is the same call you're answering right now.",
   20:"Because God named you before you drifted. I have called you by name. You are mine. Past tense. That hasn't changed.",
   21:"Because the promise is directional. Draw near and he will draw near. The movement starts with you. But the response is guaranteed.",
   22:"Because after everything — after the drift, the shame, the failed attempts, the silence — nothing has separated you from the love of God. Paul makes the case completely. Read the whole thing.",
-  23:"Because before you were backslidden you were chosen, adopted, redeemed, and sealed. The drift didn't change any of those. This chapter names everything you still are.",
+  23:"Because before the drift — and during it, and after it — you were chosen, adopted, redeemed, and sealed. None of that changed. This chapter names everything you still are.",
   24:"Because you read verse 1 on Reading 1. No condemnation. Now you read the whole chapter. See what's between verse 1 and verse 39. That's the arc of the entire plan.",
   25:"Because you've been putting on the old self for years. This passage describes what putting on the new self actually looks like in practice. Specific. Actionable. Grace-based.",
   26:"Because you are surrounded by a cloud of witnesses — everyone who failed and came back and kept running. You are not the first. You are not alone. Run with endurance.",
@@ -395,6 +395,28 @@ function ComebackScreen({comebackCount,returnCount,onContinue}){
         <button className="btn" onClick={onContinue}>Keep going →</button>
         <Footer/>
       </div>
+    </div>
+  );
+}
+
+// ── Collapsible Card ──────────────────────────────────────────────────────────
+function CollapsibleCard({label, color, children}){
+  const [open, setOpen] = useState(false);
+  return(
+    <div style={{borderRadius:10,overflow:"hidden",border:`1px solid ${open?color||C.terra:C.nightBorder}`,marginBottom:10,transition:"border-color .2s"}}>
+      <button onClick={()=>setOpen(o=>!o)} style={{
+        width:"100%",background:C.night,border:"none",padding:"11px 14px",
+        display:"flex",alignItems:"center",justifyContent:"space-between",
+        cursor:"pointer",fontFamily:"Montserrat,sans-serif",
+      }}>
+        <span style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:open?color||C.terra:C.stone}}>{label}</span>
+        <span style={{fontSize:12,color:open?color||C.terra:C.stone,transition:"transform .2s",display:"inline-block",transform:open?"rotate(180deg)":"none"}}>▼</span>
+      </button>
+      {open&&(
+        <div style={{background:C.nightCard,padding:"12px 14px",borderTop:`1px solid ${C.nightBorder}`}}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -1001,34 +1023,30 @@ export default function ReturnReadingPlan(){
             <p className="eyebrow" style={{color:PHASE_COLORS[reading.phase]}}>{PHASE_LABELS[reading.phase]} · Reading {reading.id} of 30{isReview?" — Review":""}</p>
             <h2 className="h2">{reading.ref}</h2>
             <div className="gold-line"/>
-            {/* Reading 1 audio message */}
+            {/* Reading 1 audio — always visible */}
             {reading.id===1&&!isReview&&(
-              <div style={{marginBottom:16}}>
+              <div style={{marginBottom:14}}>
                 <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>A word before you begin</p>
                 <AudioPlayer src={AUDIO_URL_READING1}/>
               </div>
             )}
-            {/* What this plan is not — Reading 1 only */}
-            {reading.id===1&&!isReview&&(
-              <div style={{background:C.night,border:`1px solid ${C.terra}`,borderRadius:10,padding:"14px",marginBottom:14}}>
-                <p style={{fontSize:10,fontWeight:600,color:C.terra,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>Before Reading 1 — a quick note</p>
-                <p className="body" style={{fontSize:12,marginBottom:6}}>This plan is not going to make you feel close to God immediately. The feeling comes back slowly, after consistent showing up.</p>
-                <p className="body" style={{fontSize:12}}>Don't measure success by how you feel after Reading 1. Measure it by whether you come back for Reading 2.</p>
-              </div>
-            )}
-            {/* Why this passage */}
-            {WHY_THIS_PASSAGE[reading.id]&&(
-              <div style={{background:C.goldDim,border:`1px solid ${C.gold}44`,borderRadius:10,padding:"12px 14px",marginBottom:14}}>
-                <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:C.gold,marginBottom:6}}>Why this reading</p>
+            {/* Collapsible context cards */}
+            {!isReview&&WHY_THIS_PASSAGE[reading.id]&&(
+              <CollapsibleCard label="Why this reading" color={C.gold}>
                 <p className="body" style={{fontSize:12,color:C.parchment}}>{WHY_THIS_PASSAGE[reading.id]}</p>
-              </div>
+              </CollapsibleCard>
             )}
-            {/* Prayer prompt */}
             {!isReview&&(
-              <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"14px",marginBottom:14}}>
-                <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.1em",textTransform:"uppercase",color:C.stone,marginBottom:6}}>Before you read</p>
+              <CollapsibleCard label={reading.id===1?"Before you begin — a quick note":"Before you read"} color={C.terra}>
+                {reading.id===1&&(
+                  <>
+                    <p className="body" style={{fontSize:12,marginBottom:8}}>This plan is not going to make you feel close to God immediately. The feeling comes back slowly, after consistent showing up.</p>
+                    <p className="body" style={{fontSize:12,marginBottom:12}}>Don't measure success by how you feel after Reading 1. Measure it by whether you come back for Reading 2.</p>
+                    <hr style={{border:"none",borderTop:`1px solid ${C.nightBorder}`,margin:"8px 0 12px"}}/>
+                  </>
+                )}
                 <p className="body" style={{fontSize:12}}>Take 30 seconds to say one honest sentence to God about where you are right now. Not a polished prayer. Just honest.</p>
-              </div>
+              </CollapsibleCard>
             )}
             <div style={{background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"16px 14px",marginBottom:16}}>
               <p className="body" style={{fontStyle:"italic",color:C.linen,lineHeight:1.8}}>{reading.verse}</p>
