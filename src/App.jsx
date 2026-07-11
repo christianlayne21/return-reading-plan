@@ -325,8 +325,36 @@ export default function ReturnReadingPlan(){
   const [viewingId,setViewingId]=useState(null);
   const [showComeback,setShowComeback]=useState(false);
   const [pendingComebackData,setPendingComebackData]=useState(null);
+  // Onboarding animation hooks — must be at top level
+  const [wordIndex,setWordIndex]=useState(0);
+  const [wordRevealed,setWordRevealed]=useState(false);
+  const [rulePhase,setRulePhase]=useState(0);
 
   useEffect(()=>{saveState(s);},[s]);
+
+  // Onboarding animation effects
+  useEffect(()=>{
+    if(s.screen!=="onboarding"||s.onboardingStep!==0)return;
+    const t=setTimeout(()=>setWordRevealed(true),400);
+    return()=>clearTimeout(t);
+  },[s.screen,s.onboardingStep]);
+
+  useEffect(()=>{
+    if(s.screen!=="onboarding"||s.onboardingStep!==0||!wordRevealed)return;
+    const words=["I","am","someone","who","returns","to","God's","Word."];
+    if(wordIndex<words.length){
+      const t=setTimeout(()=>setWordIndex(i=>i+1),180);
+      return()=>clearTimeout(t);
+    }
+  },[s.screen,s.onboardingStep,wordRevealed,wordIndex]);
+
+  useEffect(()=>{
+    if(s.screen!=="onboarding"||s.onboardingStep!==4){setRulePhase(0);return;}
+    const t1=setTimeout(()=>setRulePhase(1),600);
+    const t2=setTimeout(()=>setRulePhase(2),1800);
+    const t3=setTimeout(()=>setRulePhase(3),3200);
+    return()=>{clearTimeout(t1);clearTimeout(t2);clearTimeout(t3);};
+  },[s.screen,s.onboardingStep]);
   const upd=p=>setS(prev=>({...prev,...p}));
   const boom=()=>{setConfetti(true);setTimeout(()=>setConfetti(false),4000);};
 
@@ -427,90 +455,219 @@ export default function ReturnReadingPlan(){
   // ── ONBOARDING ───────────────────────────────────────────────────────────────
   if(s.screen==="onboarding"){
     const step=s.onboardingStep;
-    if(step===0)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <p className="eyebrow">Step 1 of 6 — Identity</p>
-        <h2 className="h2">Who you are right now</h2>
-        <p className="body" style={{marginBottom:20}}>Before anything else — one declaration. Not how you feel. Not who you've been. Who you're choosing to be from this moment.</p>
-        <div style={{background:C.night,border:`1px solid ${C.gold}`,borderRadius:12,padding:"22px 18px",textAlign:"center",marginBottom:24}}>
-          <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.12em",textTransform:"uppercase",color:C.stone,marginBottom:8}}>Say this out loud before continuing</p>
-          <p style={{fontSize:19,fontWeight:800,color:C.linen,lineHeight:1.4}}>"I am someone who<br/>returns to God's Word."</p>
+    const TOTAL_STEPS=6;
+    const words=["I","am","someone","who","returns","to","God's","Word."];
+
+    // Progress bar component
+    const ProgressBar=({current,total})=>(
+      <div style={{width:"100%",height:3,background:C.nightBorder,borderRadius:2,marginBottom:28,overflow:"hidden"}}>
+        <div style={{height:"100%",background:`linear-gradient(90deg,${C.terra},${C.gold})`,borderRadius:2,width:`${(current/total)*100}%`,transition:"width .5s ease"}}/>
+      </div>
+    );
+
+    // Choice tile component
+    const ChoiceTile=({label,emoji,selected,onClick})=>(
+      <button onClick={onClick} style={{
+        background:selected?`${C.terra}22`:C.night,
+        border:`1px solid ${selected?C.terra:C.nightBorder}`,
+        borderRadius:12,padding:"14px 12px",cursor:"pointer",textAlign:"center",
+        transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",gap:6,
+        fontFamily:"Montserrat,sans-serif",
+      }}>
+        <span style={{fontSize:22}}>{emoji}</span>
+        <span style={{fontSize:11,fontWeight:600,color:selected?C.terra:C.stone,lineHeight:1.3}}>{label}</span>
+      </button>
+    );
+
+    // ── STEP 0 — Identity (dramatic full-screen) ──────────────────────────────
+    if(step===0){
+      return(
+        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:C.night,padding:"24px 24px 48px"}}>
+          <style>{css}</style>
+          <div style={{width:"100%",maxWidth:600}}>
+            <ProgressBar current={1} total={TOTAL_STEPS}/>
+            <p style={{fontSize:10,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase",color:C.terra,textAlign:"center",marginBottom:40}}>Declaration</p>
+            <p style={{fontSize:13,color:C.stone,textAlign:"center",marginBottom:32,lineHeight:1.7}}>Before anything else — one declaration.<br/>Not how you feel. Not who you've been.<br/>Who you're choosing to be right now.</p>
+            <div style={{textAlign:"center",marginBottom:48,minHeight:80,display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"0 8px",alignItems:"center"}}>
+              {words.map((word,i)=>(
+                <span key={i} style={{
+                  fontSize:i===0?28:i<5?32:28,
+                  fontWeight:800,
+                  color:i>=5?C.gold:C.linen,
+                  fontFamily:"Montserrat,sans-serif",
+                  opacity:i<wordIndex?1:0,
+                  transform:i<wordIndex?"translateY(0)":"translateY(8px)",
+                  transition:"opacity .3s ease, transform .3s ease",
+                  display:"inline-block",
+                }}>{word}</span>
+              ))}
+            </div>
+            {wordIndex>=words.length&&(
+              <div>
+                <p style={{fontSize:11,color:C.stone,textAlign:"center",marginBottom:16}}>Say it out loud. Then hold to confirm.</p>
+                <HoldBtn label="Hold to confirm — I said it" holdLabel="Confirming..." duration={3000} onComplete={()=>{setWordIndex(0);setWordRevealed(false);upd({onboardingStep:1});}}/>
+                <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
+              </div>
+            )}
+            <div style={{marginTop:32}}><Footer/></div>
+          </div>
         </div>
-        <HoldBtn label="Hold to confirm — I said it" holdLabel="Confirming..." duration={3000} onComplete={()=>upd({onboardingStep:1})}/>
-        <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
-        <Footer/>
-      </div></div>
-    );
-    if(step===1)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({onboardingStep:0})}>← Back</button>
-        <p className="eyebrow">Step 2 of 6 — Anchor</p>
-        <h2 className="h2">When will you read?</h2>
-        <p className="body" style={{marginBottom:8}}>The most reliable way to build a habit is to attach it to something you already do every day without thinking. Don't pick a time. Pick a trigger.</p>
-        <p className="body" style={{marginBottom:20}}>When your trigger happens, reading happens with it.</p>
-        <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>"I will read immediately after..."</p>
-        <textarea className="inp" rows={2} placeholder="e.g. my morning coffee, brushing my teeth, getting into bed..." value={s.anchor} onChange={e=>upd({anchor:e.target.value})}/>
-        <div style={{marginTop:18}}><button className="btn" disabled={!s.anchor.trim()} onClick={()=>upd({onboardingStep:2})}>Continue</button></div>
-        <Footer/>
-      </div></div>
-    );
-    if(step===2)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({onboardingStep:1})}>← Back</button>
-        <p className="eyebrow">Step 3 of 6 — Location</p>
-        <h2 className="h2">Where will your Bible live?</h2>
-        <p className="body" style={{marginBottom:8}}>Research shows the single biggest predictor of whether you read is whether your Bible is visible before your phone is.</p>
-        <p className="body" style={{marginBottom:20}}>This decision gets made once — right now — so you never have to make it in a moment of low motivation.</p>
-        <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>"My Bible will live at..."</p>
-        <textarea className="inp" rows={2} placeholder="e.g. on top of my phone on my nightstand, on the kitchen counter..." value={s.location} onChange={e=>upd({location:e.target.value})}/>
-        <div style={{marginTop:18}}><button className="btn" disabled={!s.location.trim()} onClick={()=>upd({onboardingStep:3})}>Continue</button></div>
-        <Footer/>
-      </div></div>
-    );
-    if(step===3)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({onboardingStep:2})}>← Back</button>
-        <p className="eyebrow">Step 4 of 6 — Pairing</p>
-        <h2 className="h2">What will you pair with reading?</h2>
-        <p className="body" style={{marginBottom:8}}>Pairing a habit with something you already enjoy creates an immediate reward before the spiritual payoff arrives. Over time your brain starts associating that sensory experience with opening your Bible.</p>
-        <p style={{fontSize:13,fontWeight:600,color:C.linen,marginBottom:10}}>"I will pair reading with..."</p>
-        <textarea className="inp" rows={2} placeholder="e.g. my morning coffee, a candle, my specific chair..." value={s.pairing} onChange={e=>upd({pairing:e.target.value})}/>
-        <div style={{marginTop:18,display:"flex",flexDirection:"column",gap:10}}>
-          <button className="btn" onClick={()=>upd({onboardingStep:4})}>Continue</button>
-          <button className="btn-g" onClick={()=>upd({onboardingStep:4})}>Skip</button>
+      );
+    }
+
+    // ── STEP 1 — Anchor (visual choices) ─────────────────────────────────────
+    if(step===1){
+      const ANCHORS=[
+        {label:"Morning coffee",emoji:"☕"},{label:"Brushing teeth",emoji:"🪥"},
+        {label:"Getting into bed",emoji:"🛌"},{label:"After lunch",emoji:"🍽"},
+        {label:"After work",emoji:"💼"},{label:"Something else",emoji:"✏️"},
+      ];
+      const customAnchor=!ANCHORS.slice(0,-1).some(a=>a.label===s.anchor)&&s.anchor.trim();
+      return(
+        <div className="wrap"><style>{css}</style>
+          <div className="card anim">
+            <ProgressBar current={2} total={TOTAL_STEPS}/>
+            <button className="btn-back" onClick={()=>upd({onboardingStep:0})}>← Back</button>
+            <p className="eyebrow">Step 2 of 6 — Anchor</p>
+            <h2 className="h2">When will you read?</h2>
+            <p className="body" style={{marginBottom:6}}>Don't pick a time. Pick a trigger — something you already do every day without thinking.</p>
+            <p className="body" style={{marginBottom:20,color:C.stone}}>When your trigger happens, reading happens with it.</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+              {ANCHORS.map(a=>(
+                <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
+                  selected={s.anchor===a.label||(a.label==="Something else"&&customAnchor)}
+                  onClick={()=>{
+                    if(a.label==="Something else"){upd({anchor:""});}
+                    else upd({anchor:a.label});
+                  }}/>
+              ))}
+            </div>
+            {(s.anchor===""||customAnchor||!ANCHORS.slice(0,-1).some(a=>a.label===s.anchor))&&(
+              <textarea className="inp" rows={2} placeholder="Describe your trigger..." value={s.anchor} onChange={e=>upd({anchor:e.target.value})} style={{marginBottom:4}}/>
+            )}
+            <div style={{marginTop:16}}><button className="btn" disabled={!s.anchor.trim()} onClick={()=>upd({onboardingStep:2})}>Continue</button></div>
+            <Footer/>
+          </div>
         </div>
-        <Footer/>
-      </div></div>
-    );
-    if(step===4)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({onboardingStep:3})}>← Back</button>
-        <p className="eyebrow">Step 5 of 6 — The Rule</p>
-        <h2 className="h2">The only rule</h2>
-        <p className="body" style={{marginBottom:8}}>This plan is built for missing days. Missing is expected — not a failure. The only failure is what comes after missing: letting one missed day become two.</p>
-        <p className="body" style={{marginBottom:20}}>This plan doesn't track streaks. It tracks <strong style={{color:C.linen}}>returns</strong>. Every time you open your Bible — including after a missed day — that number goes up. It never resets. Never goes backward.</p>
-        <div style={{background:C.night,border:`1px solid ${C.terra}`,borderRadius:12,padding:"22px 18px",textAlign:"center",marginBottom:24}}>
-          <p style={{fontSize:22,fontWeight:800,color:C.linen}}>Never miss twice.</p>
-          <p className="muted" style={{marginTop:8}}>Miss a day? Come back the next one. That's it.</p>
+      );
+    }
+
+    // ── STEP 2 — Location (visual choices) ───────────────────────────────────
+    if(step===2){
+      const LOCATIONS=[
+        {label:"On my nightstand",emoji:"🌙"},{label:"Kitchen counter",emoji:"🍳"},
+        {label:"My desk",emoji:"🖥"},{label:"Living room couch",emoji:"🛋"},
+        {label:"Bathroom counter",emoji:"🚿"},{label:"Somewhere else",emoji:"✏️"},
+      ];
+      const customLoc=!LOCATIONS.slice(0,-1).some(a=>a.label===s.location)&&s.location.trim();
+      return(
+        <div className="wrap"><style>{css}</style>
+          <div className="card anim">
+            <ProgressBar current={3} total={TOTAL_STEPS}/>
+            <button className="btn-back" onClick={()=>upd({onboardingStep:1})}>← Back</button>
+            <p className="eyebrow">Step 3 of 6 — Location</p>
+            <h2 className="h2">Where will your Bible live?</h2>
+            <p className="body" style={{marginBottom:6}}>The single biggest predictor of whether you read is whether your Bible is visible before your phone is.</p>
+            <p className="body" style={{marginBottom:20,color:C.stone}}>This decision gets made once — right now.</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+              {LOCATIONS.map(a=>(
+                <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
+                  selected={s.location===a.label||(a.label==="Somewhere else"&&customLoc)}
+                  onClick={()=>{if(a.label==="Somewhere else")upd({location:""});else upd({location:a.label});}}/>
+              ))}
+            </div>
+            {(s.location===""||customLoc||!LOCATIONS.slice(0,-1).some(a=>a.label===s.location))&&(
+              <textarea className="inp" rows={2} placeholder="Describe the location..." value={s.location} onChange={e=>upd({location:e.target.value})} style={{marginBottom:4}}/>
+            )}
+            <div style={{marginTop:16}}><button className="btn" disabled={!s.location.trim()} onClick={()=>upd({onboardingStep:3})}>Continue</button></div>
+            <Footer/>
+          </div>
         </div>
-        <HoldBtn label="Hold to confirm — I understand" holdLabel="Locking it in..." duration={3000} onComplete={()=>upd({onboardingStep:5})}/>
-        <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
-        <Footer/>
-      </div></div>
-    );
+      );
+    }
+
+    // ── STEP 3 — Pairing (visual choices) ────────────────────────────────────
+    if(step===3){
+      const PAIRINGS=[
+        {label:"Coffee",emoji:"☕"},{label:"Tea",emoji:"🫖"},
+        {label:"A candle",emoji:"🕯"},{label:"My specific chair",emoji:"🪑"},
+        {label:"Silence",emoji:"🤫"},{label:"Something else",emoji:"✏️"},
+      ];
+      const customPair=!PAIRINGS.slice(0,-1).some(a=>a.label===s.pairing)&&s.pairing.trim();
+      return(
+        <div className="wrap"><style>{css}</style>
+          <div className="card anim">
+            <ProgressBar current={4} total={TOTAL_STEPS}/>
+            <button className="btn-back" onClick={()=>upd({onboardingStep:2})}>← Back</button>
+            <p className="eyebrow">Step 4 of 6 — Pairing</p>
+            <h2 className="h2">What will you pair with reading?</h2>
+            <p className="body" style={{marginBottom:6}}>Pairing a habit with something you already enjoy creates an immediate reward. Over time your brain starts associating that experience with opening your Bible.</p>
+            <p className="body" style={{marginBottom:20,color:C.stone}}>Optional — but powerful.</p>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+              {PAIRINGS.map(a=>(
+                <ChoiceTile key={a.label} label={a.label} emoji={a.emoji}
+                  selected={s.pairing===a.label||(a.label==="Something else"&&customPair)}
+                  onClick={()=>{if(a.label==="Something else")upd({pairing:""});else upd({pairing:a.label});}}/>
+              ))}
+            </div>
+            {(s.pairing===""||customPair||!PAIRINGS.slice(0,-1).some(a=>a.label===s.pairing))&&(
+              <textarea className="inp" rows={2} placeholder="Describe your pairing..." value={s.pairing} onChange={e=>upd({pairing:e.target.value})} style={{marginBottom:4}}/>
+            )}
+            <div style={{marginTop:16,display:"flex",flexDirection:"column",gap:10}}>
+              <button className="btn" onClick={()=>upd({onboardingStep:4})}>Continue</button>
+              <button className="btn-g" onClick={()=>upd({onboardingStep:4})}>Skip</button>
+            </div>
+            <Footer/>
+          </div>
+        </div>
+      );
+    }
+
+    // ── STEP 4 — The Rule (full-screen ceremony) ──────────────────────────────
+    if(step===4){
+      return(
+        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:C.night,padding:"24px 24px 48px"}}>
+          <style>{css}</style>
+          <div style={{width:"100%",maxWidth:600}}>
+            <ProgressBar current={5} total={TOTAL_STEPS}/>
+            <button className="btn-back" onClick={()=>upd({onboardingStep:3})}>← Back</button>
+            <div style={{textAlign:"center",marginBottom:48}}>
+              <p style={{opacity:rulePhase>=1?1:0,transform:rulePhase>=1?"none":"translateY(10px)",transition:"all .6s ease",fontSize:10,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase",color:C.terra,marginBottom:32}}>The Only Rule</p>
+              <p style={{opacity:rulePhase>=2?1:0,transform:rulePhase>=2?"none":"translateY(10px)",transition:"all .7s ease .2s",fontSize:11,color:C.stone,marginBottom:24,lineHeight:1.7}}>This plan is built for missing days.<br/>Missing is expected. The only failure<br/>is letting one missed day become two.</p>
+              <div style={{opacity:rulePhase>=3?1:0,transform:rulePhase>=3?"none":"scale(.95)",transition:"all .6s ease",background:`${C.terra}11`,border:`1px solid ${C.terra}`,borderRadius:16,padding:"32px 24px",marginBottom:32}}>
+                <p style={{fontSize:36,fontWeight:800,color:C.linen,letterSpacing:"-0.02em",marginBottom:8}}>Never miss twice.</p>
+                <p style={{fontSize:12,color:C.stone,fontFamily:"Montserrat,sans-serif"}}>Miss a day? Come back the next one. That's it.</p>
+              </div>
+            </div>
+            {rulePhase>=3&&(
+              <div>
+                <HoldBtn label="Hold to confirm — I understand" holdLabel="Locking it in..." duration={3000} onComplete={()=>upd({onboardingStep:5})}/>
+                <p className="muted" style={{textAlign:"center",marginTop:10}}>Hold for 3 seconds to continue</p>
+              </div>
+            )}
+            <div style={{marginTop:32}}><Footer/></div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── STEP 5 — Why One Verse ────────────────────────────────────────────────
     if(step===5)return(
-      <div className="wrap"><style>{css}</style><div className="card anim">
-        <button className="btn-back" onClick={()=>upd({onboardingStep:4})}>← Back</button>
-        <p className="eyebrow">Step 6 of 6 — Why One Verse</p>
-        <h2 className="h2">{PHASE_WHY[1].title}</h2>
-        {PHASE_WHY[1].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:12}}>{p}</p>)}
-        <div style={{marginTop:8}}><button className="btn" onClick={()=>upd({screen:"quiz"})}>I'm ready →</button></div>
-        <Footer/>
-      </div></div>
+      <div className="wrap"><style>{css}</style>
+        <div className="card anim">
+          <ProgressBar current={6} total={TOTAL_STEPS}/>
+          <button className="btn-back" onClick={()=>upd({onboardingStep:4})}>← Back</button>
+          <p className="eyebrow">Step 6 of 6 — Why One Verse</p>
+          <h2 className="h2">{PHASE_WHY[1].title}</h2>
+          {PHASE_WHY[1].body.split("\n\n").map((p,i)=><p key={i} className="body" style={{marginBottom:12}}>{p}</p>)}
+          <div style={{marginTop:8}}><button className="btn" onClick={()=>upd({screen:"quiz"})}>I'm ready →</button></div>
+          <Footer/>
+        </div>
+      </div>
     );
   }
 
-  // ── QUIZ ─────────────────────────────────────────────────────────────────────
+    // ── QUIZ ─────────────────────────────────────────────────────────────────────
   if(s.screen==="quiz"){
     const q=QUIZ[quizQ];
     return(
