@@ -729,10 +729,9 @@ export default function ReturnReadingPlan(){
         <p className="eyebrow">Reading 5 Complete</p>
         <h2 className="h2">Quick check-in</h2>
         <div className="gold-line"/>
-        <p className="body" style={{marginBottom:20}}>You've completed five readings. I genuinely want to know — how is it going so far? Be as honest as you want. I read these personally.</p>
         <SimpleForm
           title="Quick check-in"
-          description="Five readings in. I genuinely want to know how it's going — be as honest as you want."
+          description="Research shows that people who reflect on their progress are significantly more likely to keep going. Writing down what's working and what's hard makes the growth visible — and visible growth builds momentum. Take two minutes and answer these honestly."
           questions={[
             "What made you decide to start the Return Reading Plan?",
             "What has surprised you most about the plan so far?",
@@ -1104,7 +1103,7 @@ export default function ReturnReadingPlan(){
           <div className="card anim">
             <SimpleForm
             title="Unlock the Message"
-            description="Answer these three questions honestly and the audio unlocks immediately. Your responses help me make this plan better for everyone who comes after you."
+            description="You've made it halfway. Before you hear what I recorded for this moment — take two minutes to put into words what's actually happened since Reading 1. People who articulate their growth are significantly more likely to finish. This isn't just for me. It's for you."
             questions={[
               "What has been your lowest moment in the plan and what made you come back?",
               "What's one specific thing that has shifted in your spiritual life since Reading 1?",
@@ -1490,7 +1489,7 @@ export default function ReturnReadingPlan(){
             ?<div style={{textAlign:"center",padding:"16px 0"}}><p style={{fontSize:22,marginBottom:8}}>✓</p><p className="body" style={{color:C.linen}}>Thank you. Your story matters.</p></div>
             :<SimpleForm
               title="Would you share what happened?"
-              description="Your story helps the next person who is exactly where you were before Reading 1. Be as specific and honest as you can."
+              description="Thirty readings. Before you move on — write it down. Not for me. For yourself. The person who started this plan needed someone to tell them it was possible. Your story becomes that proof for the next person who needs it just as badly as you did."
               questions={[
                 "Where were you spiritually before Reading 1 — be specific?",
                 "What moment in the plan had the biggest impact on you and why?",
