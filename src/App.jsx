@@ -379,26 +379,59 @@ function AudioPlayer({src}){
   );
 }
 
-// ── Simple Form ────────────────────────────────────────────────────────────────
-function SimpleForm({title,description,textLabel,textPlaceholder,submitLabel,formType,extraData,savedName,onSuccess}){
-  const [name,setName]=useState(savedName||""),[text,setText]=useState("");
+// ── Multi-Question Form ────────────────────────────────────────────────────────
+function SimpleForm({title,description,questions,submitLabel,formType,extraData,savedName,onSuccess}){
+  const [name,setName]=useState(savedName||"");
+  const [answers,setAnswers]=useState(questions?questions.map(()=>""):[""]);
   const [submitting,setSubmitting]=useState(false),[error,setError]=useState(false),[done,setDone]=useState(false);
+
+  const allAnswered=name.trim()&&answers.every(a=>a.trim().length>=20);
+
   const submit=async()=>{
-    if(!name.trim()||!text.trim())return;
+    if(!allAnswered)return;
     setSubmitting(true);setError(false);
-    const ok=await submitForm({"form-type":formType,name,text,...(extraData||{})});
-    if(ok){setDone(true);setTimeout(()=>onSuccess(name,text),1500);}else setError(true);
+    const formData={"form-type":formType,name,...(extraData||{})};
+    if(questions){
+      questions.forEach((q,i)=>{formData[`q${i+1}`]=q;formData[`a${i+1}`]=answers[i];});
+    }else{
+      formData.text=answers[0];
+    }
+    const ok=await submitForm(formData);
+    if(ok){setDone(true);setTimeout(()=>onSuccess(name,answers[0]),1500);}else setError(true);
     setSubmitting(false);
   };
-  if(done)return(<div style={{textAlign:"center",padding:"20px 0"}}><p style={{fontSize:28,marginBottom:10}}>✓</p><p className="body" style={{color:C.linen,fontWeight:600}}>Received. Thank you.</p></div>);
+
+  if(done)return(
+    <div style={{textAlign:"center",padding:"20px 0"}}>
+      <p style={{fontSize:28,marginBottom:10}}>✓</p>
+      <p className="body" style={{color:C.linen,fontWeight:600}}>Received. Thank you.</p>
+    </div>
+  );
+
   return(
-    <div style={{display:"flex",flexDirection:"column",gap:12}}>
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
       {title&&<p className="h3">{title}</p>}
       {description&&<p className="body" style={{marginBottom:4}}>{description}</p>}
-      <div><p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your name</p><input className="inp" placeholder="First name..." value={name} onChange={e=>setName(e.target.value)}/></div>
-      <div><p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>{textLabel}</p><textarea className="inp" rows={4} placeholder={textPlaceholder} value={text} onChange={e=>setText(e.target.value)}/></div>
+      <div>
+        <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your name</p>
+        <input className="inp" placeholder="First name..." value={name} onChange={e=>setName(e.target.value)}/>
+      </div>
+      {questions?questions.map((q,i)=>(
+        <div key={i}>
+          <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>{i+1}. {q}</p>
+          <textarea className="inp" rows={3} placeholder="Be honest and specific..." value={answers[i]} onChange={e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a);}}/>
+          {answers[i].length>0&&answers[i].trim().length<20&&<p className="muted" style={{marginTop:4}}>Keep going — a little more detail helps.</p>}
+        </div>
+      )):(
+        <div>
+          <textarea className="inp" rows={4} placeholder="Be honest and specific..." value={answers[0]} onChange={e=>setAnswers([e.target.value])}/>
+        </div>
+      )}
       {error&&<p style={{color:C.red,fontSize:11}}>Something went wrong. Please try again.</p>}
-      <button className="btn" disabled={submitting||!name.trim()||!text.trim()} onClick={submit}>{submitting?"Sending...":submitLabel}</button>
+      <button className="btn" disabled={submitting||!allAnswered} onClick={submit}>
+        {submitting?"Sending...":submitLabel}
+      </button>
+      {!allAnswered&&name.trim()&&<p className="muted" style={{textAlign:"center"}}>Answer each question with at least a sentence to continue.</p>}
     </div>
   );
 }
@@ -698,8 +731,13 @@ export default function ReturnReadingPlan(){
         <div className="gold-line"/>
         <p className="body" style={{marginBottom:20}}>You've completed five readings. I genuinely want to know — how is it going so far? Be as honest as you want. I read these personally.</p>
         <SimpleForm
-          textLabel="How are you feeling about the plan so far?"
-          textPlaceholder="Be honest — what's working, what's hard, how you're feeling..."
+          title="Quick check-in"
+          description="Five readings in. I genuinely want to know how it's going — be as honest as you want."
+          questions={[
+            "What made you decide to start the Return Reading Plan?",
+            "What has surprised you most about the plan so far?",
+            "What's been the hardest part of showing up consistently so far?"
+          ]}
           submitLabel="Send →"
           formType="Reading 5 Check-In"
           extraData={{email:s.email,completedReadings:5}}
@@ -1064,7 +1102,20 @@ export default function ReturnReadingPlan(){
         </div>
         {!s.midpointUnlocked&&(
           <div className="card anim">
-            <SimpleForm title="Unlock the Message" description="Be honest — what's worked, what's been hard. Your answer helps me make this better for the next person. It unlocks the audio message immediately." textLabel="Your experience so far" textPlaceholder="What's working, what's been hard..." submitLabel="Submit & Unlock →" formType="Midpoint Reflection (Reading 15)" extraData={{email:s.email}} savedName={s.firstName} onSuccess={()=>upd({midpointUnlocked:true})}/>
+            <SimpleForm
+            title="Unlock the Message"
+            description="Answer these three questions honestly and the audio unlocks immediately. Your responses help me make this plan better for everyone who comes after you."
+            questions={[
+              "What has been your lowest moment in the plan and what made you come back?",
+              "What's one specific thing that has shifted in your spiritual life since Reading 1?",
+              "What would you tell someone who was hesitant to start the plan?"
+            ]}
+            submitLabel="Submit & Unlock →"
+            formType="Midpoint Reflection (Reading 15)"
+            extraData={{email:s.email}}
+            savedName={s.firstName}
+            onSuccess={()=>upd({midpointUnlocked:true})}
+          />
           </div>
         )}
         <button className="btn" onClick={()=>upd({screen:"plan"})}>Continue to Reading 16 →</button>
@@ -1437,7 +1488,22 @@ export default function ReturnReadingPlan(){
         <div className="card anim">
           {s.completionSubmitted
             ?<div style={{textAlign:"center",padding:"16px 0"}}><p style={{fontSize:22,marginBottom:8}}>✓</p><p className="body" style={{color:C.linen}}>Thank you. Your story matters.</p></div>
-            :<SimpleForm title="Would you share what happened?" description="How many days did you end up reading? Did this plan help? Would you recommend it? Your story helps the next person who needs to come back." textLabel="Your honest experience" textPlaceholder="What changed..." submitLabel="Send my story →" formType="Day 30 Testimonial" extraData={{email:s.email,"day1-why":s.day1Why,"return-count":s.returnCount,badges:s.badges.join(", ")}} savedName={s.firstName} onSuccess={()=>upd({completionSubmitted:true})}/>
+            :<SimpleForm
+              title="Would you share what happened?"
+              description="Your story helps the next person who is exactly where you were before Reading 1. Be as specific and honest as you can."
+              questions={[
+                "Where were you spiritually before Reading 1 — be specific?",
+                "What moment in the plan had the biggest impact on you and why?",
+                "What would you tell someone who is exactly where you were before you started?",
+                "How has your relationship with God changed since Reading 1?",
+                "What makes this plan different from every other plan you've tried?"
+              ]}
+              submitLabel="Send my story →"
+              formType="Day 30 Testimonial"
+              extraData={{email:s.email,"day1-why":s.day1Why,"return-count":s.returnCount,badges:s.badges.join(", ")}}
+              savedName={s.firstName}
+              onSuccess={()=>upd({completionSubmitted:true})}
+            />
           }
         </div>
 
