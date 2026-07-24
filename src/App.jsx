@@ -174,7 +174,7 @@ function freshState(){
     lastCompletedId:null,missedBeforeLast:false,
     showJournal:false,showComeback:false,
     lastReadingTimestamp:null,longAbsenceShown:false,
-    reading5CheckinDone:false,vision30:"",
+    reading5CheckinDone:false,vision30:"",phone:"",reminderTime:"8:00 AM",smsConsent:false,
     maintenanceDay:0,maintenanceMode:false,reading11Done:false,
   };
 }
@@ -1019,8 +1019,56 @@ export default function ReturnReadingPlan(){
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
       <input className="inp" type="email" placeholder="email@example.com" value={s.email} onChange={e=>upd({email:e.target.value})}/>
       <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you. Use a regular browser window — not incognito — so your progress stays saved.</p>
+
+      <div style={{height:1,background:C.nightBorder,margin:"20px 0"}}/>
+
+      <p style={{fontSize:12,fontWeight:700,color:C.linen,marginBottom:4}}>Daily reading reminder <span style={{color:C.stone,fontWeight:400}}>— optional but highly recommended</span></p>
+      <p className="muted" style={{marginBottom:12}}>People who get a daily reminder are significantly more likely to finish. Add your number and we'll text you a teaser for your next reading every day at your chosen time.</p>
+      <input className="inp" type="tel" placeholder="Phone number (US only, e.g. 555-867-5309)" value={s.phone||""} onChange={e=>upd({phone:e.target.value})} style={{marginBottom:10}}/>
+
+      {(s.phone||"").trim()&&(
+        <>
+          <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>What time do you want your daily reminder?</p>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
+            {["6:00 AM","7:00 AM","8:00 AM","9:00 AM","12:00 PM","8:00 PM"].map(t=>(
+              <button key={t} onClick={()=>upd({reminderTime:t})} style={{
+                background:(s.reminderTime||"8:00 AM")===t?`${C.terra}22`:C.night,
+                border:`1px solid ${(s.reminderTime||"8:00 AM")===t?C.terra:C.nightBorder}`,
+                borderRadius:10,padding:"10px 8px",cursor:"pointer",
+                fontSize:11,fontWeight:600,color:(s.reminderTime||"8:00 AM")===t?C.terra:C.stone,
+                fontFamily:"Montserrat,sans-serif",
+              }}>{t}</button>
+            ))}
+          </div>
+          <div style={{display:"flex",alignItems:"flex-start",gap:10,background:C.night,border:`1px solid ${C.nightBorder}`,borderRadius:10,padding:"14px",marginBottom:14}}>
+            <input
+              type="checkbox"
+              id="smsConsent"
+              checked={s.smsConsent||false}
+              onChange={e=>upd({smsConsent:e.target.checked})}
+              style={{marginTop:2,accentColor:C.terra,width:16,height:16,flexShrink:0}}
+            />
+            <label htmlFor="smsConsent" style={{fontSize:11,color:C.stone,lineHeight:1.6,cursor:"pointer"}}>
+              By checking this box I agree to receive one daily SMS reminder from Christian Layne about my Bible reading plan. Message frequency: 1 message per day. Message and data rates may apply. Reply STOP at any time to unsubscribe. <a href="https://christianlayne.co/privacy" target="_blank" style={{color:C.terra}}>Privacy Policy</a>
+            </label>
+          </div>
+        </>
+      )}
+
       <button className="btn" disabled={!s.day1Why.trim()||!s.firstName.trim()} onClick={async()=>{
-        await submitForm({"form-type":"Day 1 Start",name:s.firstName,email:s.email,"day1-why":s.day1Why,anchor:s.anchor,location:s.location,pairing:s.pairing,"vision30":s.vision30||""});
+        await submitForm({
+          "form-type":"Day 1 Start",
+          name:s.firstName,
+          email:s.email,
+          "day1-why":s.day1Why,
+          anchor:s.anchor,
+          location:s.location,
+          pairing:s.pairing,
+          "vision30":s.vision30||"",
+          phone:(s.phone&&s.smsConsent)?s.phone:"",
+          "reminder-time":(s.phone&&s.smsConsent)?s.reminderTime:"",
+          "sms-consent":s.smsConsent?"yes":"no",
+        });
         upd({screen:"plan"});
       }}>Your plan is ready →</button>
       <Footer/>
