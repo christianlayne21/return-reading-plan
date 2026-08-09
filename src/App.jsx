@@ -763,7 +763,7 @@ export default function ReturnReadingPlan(){
           savedName={s.firstName}
           onSuccess={()=>{upd({reading5CheckinDone:true});setShowReading5Checkin(false);}}
         />
-        <button className="btn-g" style={{marginTop:10}} onClick={()=>{upd({reading5CheckinDone:true});setShowReading5Checkin(false);}}>Skip</button>
+
         <Footer/>
       </div>
     </div>
