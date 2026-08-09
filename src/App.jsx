@@ -174,7 +174,7 @@ function freshState(){
     lastCompletedId:null,missedBeforeLast:false,
     showJournal:false,showComeback:false,
     lastReadingTimestamp:null,longAbsenceShown:false,
-    reading5CheckinDone:false,vision30:"",day1BibleDays:0,day1GoalDays:0,
+    reading5CheckinDone:false,vision30:"",day1BibleDays:0,day1GoalDays:0,lastInitial:"",
     maintenanceDay:0,maintenanceMode:false,reading11Done:false,
   };
 }
@@ -1045,6 +1045,8 @@ export default function ReturnReadingPlan(){
       </div>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"16px 0 6px"}}>Your first name</p>
       <input className="inp" placeholder="First name..." value={s.firstName} onChange={e=>upd({firstName:e.target.value})}/>
+      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Last initial <span style={{color:C.stone,fontWeight:400}}>— so I can credit you properly (e.g. Kelly G.)</span></p>
+      <input className="inp" placeholder="G" maxLength={1} value={s.lastInitial||""} onChange={e=>upd({lastInitial:e.target.value.replace(/[^a-zA-Z]/g,"").toUpperCase()})} style={{maxWidth:80}}/>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
       <input className="inp" type="email" placeholder="email@example.com" value={s.email} onChange={e=>upd({email:e.target.value})}/>
       <p className="muted" style={{marginTop:6,marginBottom:18}}>Your progress saves on this device. Your email is only used if I need to reach you. Use a regular browser window — not incognito — so your progress stays saved.</p>
@@ -1061,6 +1063,7 @@ export default function ReturnReadingPlan(){
           "vision30":s.vision30||"",
           "bible-days-last-7":s.day1BibleDays||0,
           "goal-days-per-week":s.day1GoalDays||0,
+          "last-initial":s.lastInitial||"",
         });
         upd({screen:"plan"});
       }}>Your plan is ready →</button>
@@ -1538,7 +1541,7 @@ export default function ReturnReadingPlan(){
                 {type:"text",label:'Answer in a full sentence: "Now, my Bible reading looks like ___"',hint:"Answer in a full sentence.",placeholder:"Now, my Bible reading looks like..."},
                 {type:"text",label:"What's shifted in how you relate to God since Reading 1?",placeholder:"Be honest and specific..."},
                 {type:"text",label:"What would you tell a backslidden Christian who's exactly where you were before you started?",placeholder:"Be honest and specific..."},
-                {type:"select",label:"May I share your story to encourage others?",options:["Yes, with my first name","Yes, but keep me anonymous","No, please keep it private"]},
+                {type:"select",label:"May I share your story to encourage others?",options:["Yes — you can share my story","No — please keep this private"]},
               ]}
               submitLabel="Send my story →"
               formType="Day 30 Testimonial"
