@@ -174,7 +174,7 @@ function freshState(){
     lastCompletedId:null,missedBeforeLast:false,
     showJournal:false,showComeback:false,
     lastReadingTimestamp:null,longAbsenceShown:false,
-    reading5CheckinDone:false,vision30:"",
+    reading5CheckinDone:false,vision30:"",day1BibleDays:0,day1GoalDays:0,
     maintenanceDay:0,maintenanceMode:false,reading11Done:false,
   };
 }
@@ -382,20 +382,20 @@ function AudioPlayer({src}){
 // ── Multi-Question Form ────────────────────────────────────────────────────────
 function SimpleForm({title,description,questions,submitLabel,formType,extraData,savedName,onSuccess}){
   const [name,setName]=useState(savedName||"");
-  const [answers,setAnswers]=useState(questions?questions.map(()=>""):[""]);
+  const [answers,setAnswers]=useState(questions?questions.map(q=>q.type==="number"?"0":""): [""]);
   const [submitting,setSubmitting]=useState(false),[error,setError]=useState(false),[done,setDone]=useState(false);
 
-  const allAnswered=name.trim()&&answers.every(a=>a.trim().length>=20);
+  const allAnswered=name.trim()&&questions&&questions.every((q,i)=>{
+    if(q.type==="number") return true;
+    if(q.type==="select") return answers[i].length>0;
+    return answers[i].trim().length>=10;
+  });
 
   const submit=async()=>{
     if(!allAnswered)return;
     setSubmitting(true);setError(false);
     const formData={"form-type":formType,name,...(extraData||{})};
-    if(questions){
-      questions.forEach((q,i)=>{formData[`q${i+1}`]=q;formData[`a${i+1}`]=answers[i];});
-    }else{
-      formData.text=answers[0];
-    }
+    questions.forEach((q,i)=>{formData[`q${i+1}`]=q.label||q;formData[`a${i+1}`]=answers[i];});
     const ok=await submitForm(formData);
     if(ok){setDone(true);setTimeout(()=>onSuccess(name,answers[0]),1500);}else setError(true);
     setSubmitting(false);
@@ -416,22 +416,42 @@ function SimpleForm({title,description,questions,submitLabel,formType,extraData,
         <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>Your name</p>
         <input className="inp" placeholder="First name..." value={name} onChange={e=>setName(e.target.value)}/>
       </div>
-      {questions?questions.map((q,i)=>(
+      {questions&&questions.map((q,i)=>(
         <div key={i}>
-          <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>{i+1}. {q}</p>
-          <textarea className="inp" rows={3} placeholder="Be honest and specific..." value={answers[i]} onChange={e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a);}}/>
-          {answers[i].length>0&&answers[i].trim().length<20&&<p className="muted" style={{marginTop:4}}>Keep going — a little more detail helps.</p>}
+          <p style={{fontSize:12,fontWeight:600,color:C.linen,marginBottom:6}}>{i+1}. {q.label||q}</p>
+          {q.hint&&<p className="muted" style={{marginBottom:8,fontStyle:"italic"}}>{q.hint}</p>}
+          {q.type==="number"?(
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:4}}>
+              <input type="range" min={0} max={q.max||7} value={answers[i]||"0"}
+                onChange={e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a);}}
+                style={{flex:1,accentColor:C.terra}}/>
+              <div style={{minWidth:36,textAlign:"center",fontSize:22,fontWeight:800,color:C.terra}}>{answers[i]||"0"}</div>
+            </div>
+          ):q.type==="select"?(
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {q.options.map(opt=>(
+                <button key={opt} onClick={()=>{const a=[...answers];a[i]=opt;setAnswers(a);}} style={{
+                  background:answers[i]===opt?`${C.terra}22`:C.night,
+                  border:`1px solid ${answers[i]===opt?C.terra:C.nightBorder}`,
+                  borderRadius:10,padding:"12px 16px",cursor:"pointer",
+                  fontSize:13,fontWeight:600,color:answers[i]===opt?C.terra:C.stone,
+                  fontFamily:"Montserrat,sans-serif",textAlign:"left",
+                }}>{opt}</button>
+              ))}
+            </div>
+          ):(
+            <>
+              <textarea className="inp" rows={3} placeholder={q.placeholder||"Be honest and specific..."} value={answers[i]} onChange={e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a);}}/>
+              {answers[i].length>0&&answers[i].trim().length<10&&<p className="muted" style={{marginTop:4}}>Keep going — a little more detail helps.</p>}
+            </>
+          )}
         </div>
-      )):(
-        <div>
-          <textarea className="inp" rows={4} placeholder="Be honest and specific..." value={answers[0]} onChange={e=>setAnswers([e.target.value])}/>
-        </div>
-      )}
+      ))}
       {error&&<p style={{color:C.red,fontSize:11}}>Something went wrong. Please try again.</p>}
       <button className="btn" disabled={submitting||!allAnswered} onClick={submit}>
         {submitting?"Sending...":submitLabel}
       </button>
-      {!allAnswered&&name.trim()&&<p className="muted" style={{textAlign:"center"}}>Answer each question with at least a sentence to continue.</p>}
+      {!allAnswered&&name.trim()&&<p className="muted" style={{textAlign:"center"}}>Please answer all questions to continue.</p>}
     </div>
   );
 }
@@ -733,9 +753,9 @@ export default function ReturnReadingPlan(){
           title="Quick check-in"
           description="Research shows that people who reflect on their progress are significantly more likely to keep going. Writing down what's working and what's hard makes the growth visible — and visible growth builds momentum. Take two minutes and answer these honestly."
           questions={[
-            "What made you decide to start the Return Reading Plan?",
-            "What has surprised you most about the plan so far?",
-            "What's been the hardest part of showing up consistently so far?"
+            {type:"number",max:7,label:"In the last 7 days, how many days did you read?"},
+            {type:"text",label:"What made you start the Return Reading Plan?",placeholder:"Be honest and specific..."},
+            {type:"text",label:"What's been the hardest part of showing up so far?",placeholder:"Be honest and specific..."},
           ]}
           submitLabel="Send →"
           formType="Reading 5 Check-In"
@@ -1011,9 +1031,18 @@ export default function ReturnReadingPlan(){
       <p className="eyebrow">Before Reading 1</p>
       <h2 className="h2">What makes today your day one?</h2>
       <p className="body" style={{marginBottom:20}}>I'll show this back to you on Reading 30. It doesn't have to be profound — just honest.</p>
+      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"0 0 6px"}}>In the last 7 days, how many days did you read your Bible?</p>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+        <input type="range" min={0} max={7} value={s.day1BibleDays||0} onChange={e=>upd({day1BibleDays:parseInt(e.target.value)})} style={{flex:1,accentColor:C.terra}}/>
+        <div style={{minWidth:36,textAlign:"center",fontSize:22,fontWeight:800,color:C.terra}}>{s.day1BibleDays||0}</div>
+      </div>
+      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"0 0 6px"}}>What makes today your day one?</p>
       <textarea className="inp" rows={4} placeholder="Why today? What do you want to be different by Reading 30?" value={s.day1Why} onChange={e=>upd({day1Why:e.target.value})}/>
-      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"14px 0 6px"}}>What do you want your relationship with God to look like 30 days from now?</p>
-      <textarea className="inp" rows={3} placeholder="Be specific — what would feel different? What would be true that isn't true today?" value={s.vision30||""} onChange={e=>upd({vision30:e.target.value})}/>
+      <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"14px 0 6px"}}>My goal is to read ___ days a week for the next 30 days.</p>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+        <input type="range" min={0} max={7} value={s.day1GoalDays||0} onChange={e=>upd({day1GoalDays:parseInt(e.target.value)})} style={{flex:1,accentColor:C.terra}}/>
+        <div style={{minWidth:36,textAlign:"center",fontSize:22,fontWeight:800,color:C.terra}}>{s.day1GoalDays||0}</div>
+      </div>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"16px 0 6px"}}>Your first name</p>
       <input className="inp" placeholder="First name..." value={s.firstName} onChange={e=>upd({firstName:e.target.value})}/>
       <p style={{fontSize:12,fontWeight:600,color:C.linen,margin:"12px 0 6px"}}>Your email</p>
@@ -1030,6 +1059,8 @@ export default function ReturnReadingPlan(){
           location:s.location,
           pairing:s.pairing,
           "vision30":s.vision30||"",
+          "bible-days-last-7":s.day1BibleDays||0,
+          "goal-days-per-week":s.day1GoalDays||0,
         });
         upd({screen:"plan"});
       }}>Your plan is ready →</button>
@@ -1115,9 +1146,9 @@ export default function ReturnReadingPlan(){
             title="Unlock the Message"
             description="You've made it halfway. Before you hear what I recorded for this moment — take two minutes to put into words what's actually happened since Reading 1. People who articulate their growth are significantly more likely to finish. This isn't just for me. It's for you."
             questions={[
-              "What has been your lowest moment in the plan and what made you come back?",
-              "What's one specific thing that has shifted in your spiritual life since Reading 1?",
-              "What would you tell someone who was hesitant to start the plan?"
+              {type:"number",max:7,label:"In the last 7 days, how many days did you read?"},
+              {type:"text",label:"What was your lowest moment before you started — and what brought you back?",placeholder:"Be honest and specific..."},
+              {type:"text",label:'Answer in a full sentence: "One thing that\'s shifted for me since Reading 1 is ___"',hint:"Answer in a full sentence.",placeholder:'One thing that\'s shifted for me since Reading 1 is...'},
             ]}
             submitLabel="Submit & Unlock →"
             formType="Midpoint Reflection (Reading 15)"
@@ -1501,11 +1532,13 @@ export default function ReturnReadingPlan(){
               title="Would you share what happened?"
               description="Thirty readings. Before you move on — write it down. Not for me. For yourself. The person who started this plan needed someone to tell them it was possible. Your story becomes that proof for the next person who needs it just as badly as you did."
               questions={[
-                "Where were you spiritually before Reading 1 — be specific?",
-                "What moment in the plan had the biggest impact on you and why?",
-                "What would you tell someone who is exactly where you were before you started?",
-                "How has your relationship with God changed since Reading 1?",
-                "What makes this plan different from every other plan you've tried?"
+                {type:"number",max:7,label:"In the last 7 days, how many days did you read?"},
+                {type:"number",max:30,label:"Over the whole 30-day plan, about how many days did you read?"},
+                {type:"text",label:'Answer in a full sentence: "Before the Return Reading Plan, my Bible reading looked like ___"',hint:"Answer in a full sentence.",placeholder:"Before the Return Reading Plan, my Bible reading looked like..."},
+                {type:"text",label:'Answer in a full sentence: "Now, my Bible reading looks like ___"',hint:"Answer in a full sentence.",placeholder:"Now, my Bible reading looks like..."},
+                {type:"text",label:"What's shifted in how you relate to God since Reading 1?",placeholder:"Be honest and specific..."},
+                {type:"text",label:"What would you tell a backslidden Christian who's exactly where you were before you started?",placeholder:"Be honest and specific..."},
+                {type:"select",label:"May I share your story to encourage others?",options:["Yes, with my first name","Yes, but keep me anonymous","No, please keep it private"]},
               ]}
               submitLabel="Send my story →"
               formType="Day 30 Testimonial"
